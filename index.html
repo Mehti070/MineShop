@@ -3,7 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MineShop — DonutSMP Market & Auction</title>
+    
+    <!-- SEO Optimization Meta Tags -->
+    <title>MineShop — DonutSMP Market, Items & Auction | Магазин вещей DonutSMP</title>
+    <meta name="description" content="Лучший маркет и аукцион для DonutSMP (donutsmp.net). Покупайте игровую валюту, редкие спавнеры, элитры, незерит и головы с быстрой доставкой на сервере!">
+    <meta name="keywords" content="DonutSMP, donutsmp market, donutsmp shop, купить вещи donutsmp, спавнер скелетов donutsmp, игровая валюта donutsmp, элитра, незерит, аукцион donutsmp, mineshop">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://donutsmp-market.netlify.app/">
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MineShop — DonutSMP Market & Auction">
+    <meta property="og:description" content="Купить игровую валюту, спавнеры и редкие вещи на сервере DonutSMP по лучшим ценам.">
+    <meta property="og:site_name" content="MineShop">
+
+    <!-- Schema.org Structured Data for Fast Indexing -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "MineShop",
+      "description": "DonutSMP Item Market & Auction - Buy in-game money, spawners, and rare items.",
+      "url": "https://donutsmp-market.netlify.app/"
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -88,7 +112,8 @@
                     <span id="roleIcon" class="w-2 h-2 rounded-full"></span>
                     <span id="roleText" class="text-gray-300"></span>
                 </div>
-                <button onclick="openAuthModal()" id="authBtn" class="interactive-btn bg-cardbg hover:bg-gray-800 border border-gray-700 text-gray-200 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                <!-- Personal Account Button (if logged in) or Authorization -->
+                <button onclick="handleAuthButtonClick()" id="authBtn" class="interactive-btn bg-cardbg hover:bg-gray-800 border border-gray-700 text-gray-200 px-4 py-2 rounded-xl text-sm font-semibold transition">
                     <i class="fa-solid fa-user mr-1.5"></i> Login / Register
                 </button>
             </div>
@@ -606,7 +631,7 @@
 
     <footer id="contacts" class="border-t border-gray-800 bg-cardbg/50 mt-20 py-8 text-center text-sm text-gray-500">
         <div class="max-w-7xl mx-auto px-4 space-y-4">
-            <!-- Баннер Free-Kassa -->
+            <!-- Free-Kassa Banner -->
             <div class="flex justify-center mb-4">
                 <a href="https://freekassa.net" title="small_1" target="_blank"><img src="https://cdn.freekassa.net/images/logos/banners/f/small_1.png" alt="small_1" /></a>
             </div>
@@ -614,6 +639,112 @@
             <p class="max-w-md mx-auto text-xs">We are not affiliated with Mojang AB or Microsoft. All purchases directly support the operation of DonutSMP market services.</p>
         </div>
     </footer>
+
+    <!-- Personal Account Modal -->
+    <div id="accountModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="modal-content bg-cardbg border border-gray-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAccountModal()" class="interactive-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="bg-accent/20 p-3 rounded-2xl text-accent text-2xl">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black">Personal Account</h3>
+                    <p id="accEmailDisplay" class="text-xs text-gray-400"></p>
+                </div>
+            </div>
+
+            <!-- Profile Block: Nickname and Rank -->
+            <div class="bg-darkbg border border-gray-800 rounded-2xl p-5 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Player Nickname (Minecraft)</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="accPlayerNick" placeholder="Your nick..." class="flex-grow bg-cardbg border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
+                        <button onclick="savePlayerNick()" class="interactive-btn bg-accent hover:bg-accenthover text-white px-3 py-2 rounded-xl text-xs font-bold transition">
+                            Save
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Current Rank</label>
+                    <div id="accCurrentRankBadge" class="p-2.5 rounded-xl border text-sm font-bold flex items-center justify-between">
+                        <!-- Dynamic rank badge -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranks Shop -->
+            <div class="mb-6">
+                <h4 class="text-lg font-bold mb-3 flex items-center">
+                    <i class="fa-solid fa-crown text-amber-400 mr-2"></i> Ranks Shop & Statuses
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Elite Rank -->
+                    <div class="bg-darkbg border border-gray-800 rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="text-purple-400 font-bold text-sm mb-1">Elite Rank</div>
+                            <p class="text-xs text-gray-400 mb-3">Grants weekly random discounts from 5% to 25% on purchases.</p>
+                        </div>
+                        <div>
+                            <div class="text-white font-black text-base mb-2">$1.99</div>
+                            <button onclick="buyEliteRank()" id="buyEliteBtn" class="interactive-btn w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-xs font-bold transition">
+                                Buy for $1.99
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Admin Rank -->
+                    <div class="bg-darkbg border border-gray-800 rounded-2xl p-4 flex flex-col justify-between sm:col-span-2">
+                        <div>
+                            <div class="text-amber-400 font-bold text-sm mb-1">Admin Rank</div>
+                            <p class="text-xs text-gray-400 mb-3">Full access to orders panel and coordinates. Received by players after administration approval.</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span id="adminStatusText" class="text-xs text-gray-500 font-semibold">Status: Regular Player</span>
+                            <button onclick="requestAdminApproval()" id="requestAdminBtn" class="interactive-btn bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
+                                Request Approval
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All-Time Purchase History -->
+            <div>
+                <h4 class="text-lg font-bold mb-3 flex items-center">
+                    <i class="fa-solid fa-clock-rotate-left text-accent mr-2"></i> All-Time Purchase History
+                </h4>
+                <div class="bg-darkbg border border-gray-800 rounded-2xl overflow-hidden">
+                    <div class="max-h-48 overflow-y-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-gray-800 text-gray-400 uppercase">
+                                    <th class="py-2.5 px-3">Order ID</th>
+                                    <th class="py-2.5 px-3">Items</th>
+                                    <th class="py-2.5 px-3">Amount</th>
+                                    <th class="py-2.5 px-3 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userPurchasesHistory" class="divide-y divide-gray-800/60"></tbody>
+                        </table>
+                    </div>
+                    <div id="noUserPurchases" class="py-6 text-center text-gray-500 text-xs">
+                        You have no completed purchases yet.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-800 flex justify-between items-center">
+                <button onclick="logoutUser()" class="interactive-btn bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Log Out
+                </button>
+                <button onclick="closeAccountModal()" class="interactive-btn bg-gray-800 hover:bg-gray-700 text-gray-200 px-5 py-2 rounded-xl text-xs font-semibold transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="cartModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative">
@@ -865,7 +996,7 @@
                     usersDB[adminIndex].password = adm.password;
                     usersDB[adminIndex].role = 'Admin';
                 } else {
-                    usersDB.push({ email: adm.email, password: adm.password, role: 'Admin' });
+                    usersDB.push({ email: adm.email, password: adm.password, role: 'Admin', rank: 'Admin', purchasesCount: 0, playerNick: '', eliteActive: false, adminRequested: true, adminApproved: true });
                 }
             });
             saveUsers();
@@ -875,12 +1006,19 @@
             let sessionUser = sessionStorage.getItem('mineshop_session');
             if(sessionUser) {
                 try { 
-                    currentUser = JSON.parse(sessionUser);
+                    let parsed = JSON.parse(sessionUser);
+                    let found = usersDB.find(u => u.email.toLowerCase() === parsed.email.toLowerCase());
+                    if (found) {
+                        currentUser = found;
+                    } else {
+                        currentUser = parsed;
+                    }
                     if (currentUser.email && adminAccounts.some(a => a.email.toLowerCase() === currentUser.email.toLowerCase())) {
                         let match = adminAccounts.find(a => a.email.toLowerCase() === currentUser.email.toLowerCase());
                         currentUser.role = 'Admin';
+                        currentUser.rank = 'Admin';
                         currentUser.password = match.password;
-                        sessionStorage.setItem('mineshop_session', JSON.stringify(currentUser));
+                        currentUser.adminApproved = true;
                     }
                 } catch(e) { currentUser = null; }
             }
@@ -890,6 +1028,12 @@
 
         function saveUsers() {
             localStorage.setItem('mineshop_users', JSON.stringify(usersDB));
+            if (currentUser) {
+                let idx = usersDB.findIndex(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
+                if (idx !== -1) {
+                    sessionStorage.setItem('mineshop_session', JSON.stringify(usersDB[idx]));
+                }
+            }
         }
 
         function saveRonaldoUsage() {
@@ -919,6 +1063,31 @@
                     visit_count: row.visit_count || 1,
                     last_visit: row.last_visit || ''
                 }));
+
+                usersDB.forEach(user => {
+                    let userOrders = ordersList.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
+                    user.purchasesCount = userOrders.length;
+                    
+                    let adminMatch = adminAccounts.some(a => a.email.toLowerCase() === user.email.toLowerCase());
+                    if (adminMatch || user.role === 'Admin' || user.adminApproved) {
+                        user.rank = 'Admin';
+                        user.role = 'Admin';
+                    } else if (user.eliteActive) {
+                        user.rank = 'Elite';
+                    } else if (user.purchasesCount >= 40) {
+                        user.rank = 'Expert';
+                    } else if (user.purchasesCount >= 20) {
+                        user.rank = 'Fan';
+                    } else {
+                        user.rank = 'Player';
+                    }
+                });
+                saveUsers();
+
+                if (currentUser) {
+                    let updatedCurr = usersDB.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
+                    if (updatedCurr) currentUser = updatedCurr;
+                }
 
                 if (currentUser && currentUser.role !== 'Admin') {
                     ordersList.forEach(ord => {
@@ -1059,8 +1228,6 @@
             }
 
             let qtyStr = qty + ' pcs';
-            let totalPrice = (qty * unitPrice).toFixed(2);
-
             let existingItem = cartItems.find(item => item.name === name);
             if (existingItem) {
                 existingItem.qtyNum += qty;
@@ -1125,6 +1292,19 @@
             }
         }
 
+        function getEliteDiscountPercent() {
+            if (!currentUser || currentUser.rank !== 'Elite') return 0;
+            let key = 'elite_discount_' + currentUser.email.toLowerCase() + '_' + new Date().toDateString();
+            let savedDisc = localStorage.getItem(key);
+            if (savedDisc !== null) {
+                return parseInt(savedDisc);
+            } else {
+                let randDisc = Math.floor(Math.random() * 21) + 5;
+                localStorage.setItem(key, randDisc);
+                return randDisc;
+            }
+        }
+
         function updateCartUI() {
             const container = document.getElementById('cartItemsContainer');
             const emptyMsg = document.getElementById('cartEmptyMessage');
@@ -1150,6 +1330,7 @@
             checkoutBtn.classList.remove('hidden');
 
             let totalSum = 0;
+            let eliteDisc = getEliteDiscountPercent();
 
             let maxPriceIndex = -1;
             let maxItemPrice = -1;
@@ -1165,23 +1346,27 @@
 
             cartItems.forEach((item, index) => {
                 let numericPrice = item.unitPrice * item.qtyNum;
-                let isDiscountedItem = (appliedPromo === 'ronaldo' && index === maxPriceIndex);
+                let isRonaldoDiscounted = (appliedPromo === 'ronaldo' && index === maxPriceIndex);
                 
                 let displayPrice = numericPrice;
-                if (isDiscountedItem) {
+                if (isRonaldoDiscounted) {
                     displayPrice = numericPrice * 0.95; 
+                } else if (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0) {
+                    displayPrice = numericPrice * (1 - eliteDisc / 100);
                 }
+
                 totalSum += displayPrice;
 
                 let div = document.createElement('div');
                 div.className = 'py-3 flex items-center justify-between';
                 
                 let priceHtml = '';
-                if (isDiscountedItem) {
+                if (isRonaldoDiscounted || (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0)) {
+                    let badgeLabel = isRonaldoDiscounted ? '-5%' : `-${eliteDisc}% (Elite)`;
                     priceHtml = `
                         <div class="text-right">
                             <span class="text-xs text-gray-500 line-through mr-1">$${numericPrice.toFixed(2)}</span>
-                            <span class="font-bold text-emerald-400 text-sm">$${displayPrice.toFixed(2)} <span class="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300">-5%</span></span>
+                            <span class="font-bold text-emerald-400 text-sm">$${displayPrice.toFixed(2)} <span class="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300">${badgeLabel}</span></span>
                         </div>
                     `;
                 } else {
@@ -1239,6 +1424,7 @@
             let summaryItemsStr = cartItems.map(i => `${i.name} (${i.qty})`).join(', ');
             
             let totalSum = 0;
+            let eliteDisc = getEliteDiscountPercent();
             let maxPriceIndex = -1;
             let maxItemPrice = -1;
             if (appliedPromo === 'ronaldo' && cartItems.length > 0) {
@@ -1255,6 +1441,8 @@
                 let numericPrice = item.unitPrice * item.qtyNum;
                 if (appliedPromo === 'ronaldo' && index === maxPriceIndex) {
                     numericPrice *= 0.95;
+                } else if (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0) {
+                    numericPrice *= (1 - eliteDisc / 100);
                 }
                 totalSum += numericPrice;
             });
@@ -1273,7 +1461,7 @@
                 player: nick,
                 email: currentUser.email,       
                 password: currentUser.password, 
-                item: summaryItemsStr + (appliedPromo ? ' [Promo: Ronaldo]' : ''),
+                item: summaryItemsStr + (appliedPromo ? ' [Promo: Ronaldo]' : '') + (currentUser.rank === 'Elite' ? ` [Elite Discount ${eliteDisc}%]` : ''),
                 price: '$' + totalSum.toFixed(2),
                 status: 'Pending Delivery',
                 device_info: deviceInfo,
@@ -1342,6 +1530,14 @@
 
         let isRegisterMode = false;
 
+        function handleAuthButtonClick() {
+            if (currentUser) {
+                openAccountModal();
+            } else {
+                openAuthModal();
+            }
+        }
+
         function openAuthModal() {
             isRegisterMode = false;
             updateAuthModalUI();
@@ -1402,7 +1598,13 @@
                 let newUser = {
                     email: email,
                     password: password,
-                    role: isAdmin ? 'Admin' : 'Buyer'
+                    role: isAdmin ? 'Admin' : 'Buyer',
+                    rank: isAdmin ? 'Admin' : 'Player',
+                    purchasesCount: 0,
+                    playerNick: '',
+                    eliteActive: false,
+                    adminRequested: false,
+                    adminApproved: isAdmin
                 };
 
                 usersDB.push(newUser);
@@ -1419,7 +1621,7 @@
                 
                 if(!foundUser) {
                     if (isAdmin) {
-                        foundUser = { email: email, password: password, role: 'Admin' };
+                        foundUser = { email: email, password: password, role: 'Admin', rank: 'Admin', purchasesCount: 0, playerNick: '', eliteActive: false, adminRequested: false, adminApproved: true };
                         usersDB.push(foundUser);
                         saveUsers();
                     } else {
@@ -1435,7 +1637,9 @@
 
                 if (isAdmin) {
                     foundUser.role = 'Admin';
+                    foundUser.rank = 'Admin';
                     foundUser.password = matchingAdmin.password;
+                    foundUser.adminApproved = true;
                     saveUsers();
                 }
 
@@ -1446,11 +1650,154 @@
             }
         }
 
+        function openAccountModal() {
+            if (!currentUser) {
+                openAuthModal();
+                return;
+            }
+            document.getElementById('accEmailDisplay').textContent = currentUser.email;
+            document.getElementById('accPlayerNick').value = currentUser.playerNick || '';
+
+            renderAccountRankAndShop();
+            renderUserPurchasesHistory();
+
+            const modal = document.getElementById('accountModal');
+            modal.classList.remove('modal-hidden');
+            modal.classList.add('modal-visible');
+        }
+
+        function closeAccountModal() {
+            const modal = document.getElementById('accountModal');
+            modal.classList.remove('modal-visible');
+            modal.classList.add('modal-hidden');
+        }
+
+        function savePlayerNick() {
+            let nick = document.getElementById('accPlayerNick').value.trim();
+            if (!nick) {
+                alert('Please enter a nickname!');
+                return;
+            }
+            currentUser.playerNick = nick;
+            saveUsers();
+            alert('Nickname successfully saved!');
+        }
+
+        function renderAccountRankAndShop() {
+            let badgeEl = document.getElementById('accCurrentRankBadge');
+            let eliteBtn = document.getElementById('buyEliteBtn');
+            let adminStatusText = document.getElementById('adminStatusText');
+            let requestAdminBtn = document.getElementById('requestAdminBtn');
+
+            let rankName = currentUser.rank || 'Player';
+            let rankColorClass = 'text-gray-300 border-gray-700 bg-darkbg';
+
+            if (rankName === 'Fan') rankColorClass = 'text-blue-400 border-blue-500/40 bg-blue-500/10';
+            else if (rankName === 'Expert') rankColorClass = 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
+            else if (rankName === 'Elite') rankColorClass = 'text-purple-400 border-purple-500/40 bg-purple-500/10';
+            else if (rankName === 'Admin') rankColorClass = 'text-amber-400 border-amber-500/40 bg-amber-500/10';
+
+            badgeEl.className = `p-2.5 rounded-xl border text-sm font-bold flex items-center justify-between ${rankColorClass}`;
+            let eliteDisc = getEliteDiscountPercent();
+            let discountInfo = (rankName === 'Elite') ? ` (This week's discount: ${eliteDisc}%)` : '';
+            badgeEl.innerHTML = `<span><i class="fa-solid fa-shield mr-1.5"></i> ${rankName}${discountInfo}</span> <span class="text-xs text-gray-400 font-normal">Purchases: ${currentUser.purchasesCount || 0}</span>`;
+
+            if (currentUser.rank === 'Elite') {
+                eliteBtn.textContent = 'Purchased (Elite)';
+                eliteBtn.className = 'interactive-btn w-full bg-purple-600/40 text-purple-300 py-2 rounded-xl text-xs font-bold cursor-default';
+            } else {
+                eliteBtn.textContent = 'Buy for $1.99';
+                eliteBtn.className = 'interactive-btn w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-xs font-bold transition';
+            }
+
+            if (currentUser.role === 'Admin' || currentUser.adminApproved) {
+                adminStatusText.textContent = 'Status: Approved (Admin)';
+                adminStatusText.className = 'text-xs text-emerald-400 font-semibold';
+                requestAdminBtn.textContent = 'Approved';
+                requestAdminBtn.disabled = true;
+                requestAdminBtn.className = 'bg-gray-800 text-gray-500 px-4 py-2 rounded-xl text-xs font-bold cursor-not-allowed';
+            } else if (currentUser.adminRequested) {
+                adminStatusText.textContent = 'Status: Request sent for review';
+                adminStatusText.className = 'text-xs text-amber-400 font-semibold';
+                requestAdminBtn.textContent = 'Pending...';
+                requestAdminBtn.disabled = true;
+                requestAdminBtn.className = 'bg-gray-800 text-gray-500 px-4 py-2 rounded-xl text-xs font-bold cursor-not-allowed';
+            } else {
+                adminStatusText.textContent = 'Status: Not requested';
+                adminStatusText.className = 'text-xs text-gray-400 font-semibold';
+                requestAdminBtn.textContent = 'Request Approval';
+                requestAdminBtn.disabled = false;
+                requestAdminBtn.className = 'interactive-btn bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition';
+            }
+        }
+
+        async function buyEliteRank() {
+            if (currentUser.rank === 'Elite' || currentUser.eliteActive) {
+                alert('You already have the Elite rank!');
+                return;
+            }
+            if (confirm('Buy Elite rank for $1.99 and get weekly discounts from 5% to 25%?')) {
+                currentUser.eliteActive = true;
+                currentUser.rank = 'Elite';
+                saveUsers();
+                renderAccountRankAndShop();
+                alert('Congratulations! You have successfully purchased the Elite rank!');
+            }
+        }
+
+        function requestAdminApproval() {
+            if (currentUser.adminRequested || currentUser.adminApproved) return;
+            currentUser.adminRequested = true;
+            saveUsers();
+            renderAccountRankAndShop();
+            alert('Admin rank request successfully sent! Wait for owner approval.');
+        }
+
+        function renderUserPurchasesHistory() {
+            const tbody = document.getElementById('userPurchasesHistory');
+            const noMsg = document.getElementById('noUserPurchases');
+            tbody.innerHTML = '';
+
+            if (!currentUser) return;
+            let userOrders = ordersList.filter(o => o.email && o.email.toLowerCase() === currentUser.email.toLowerCase());
+
+            if (userOrders.length === 0) {
+                noMsg.style.display = 'block';
+                return;
+            } else {
+                noMsg.style.display = 'none';
+            }
+
+            userOrders.forEach(ord => {
+                let statusBadge = ord.status === 'Delivered' 
+                    ? '<span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Delivered</span>' 
+                    : '<span class="text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded font-semibold">Pending</span>';
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-mono text-gray-400">${ord.id}</td>
+                    <td class="py-2.5 px-3 text-gray-200">${ord.item}</td>
+                    <td class="py-2.5 px-3 font-bold text-emerald-400">${ord.price}</td>
+                    <td class="py-2.5 px-3 text-right">${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            sessionStorage.removeItem('mineshop_session');
+            closeAccountModal();
+            updateUIRoles();
+            alert('You have logged out of your account.');
+        }
+
         function updateUIRoles() {
             if (currentUser && currentUser.email) {
                 let match = adminAccounts.find(a => a.email.toLowerCase() === currentUser.email.toLowerCase());
                 if (match) {
                     currentUser.role = 'Admin';
+                    currentUser.rank = 'Admin';
                 }
             }
 
@@ -1465,7 +1812,7 @@
             if(currentUser) {
                 badge.classList.remove('hidden');
                 badge.classList.add('flex');
-                authBtn.innerHTML = `<i class="fa-solid fa-user-check mr-1.5 text-emerald-400"></i> ${currentUser.email.split('@')[0]}`;
+                authBtn.innerHTML = `<i class="fa-solid fa-user-gear mr-1.5 text-accent"></i> Account (${currentUser.email.split('@')[0]})`;
                 
                 if(currentUser.role === 'Admin') {
                     roleText.textContent = 'Admin';
@@ -1476,7 +1823,7 @@
                     adminEmailDisplay.textContent = currentUser.email;
                     loadOrdersFromSupabase();
                 } else {
-                    roleText.textContent = 'Buyer';
+                    roleText.textContent = currentUser.rank || 'Player';
                     roleIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
                     badge.className = 'hidden sm:flex items-center space-x-2 bg-cardbg border border-gray-800 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300';
                     adminPanel.classList.add('hidden');

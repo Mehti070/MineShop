@@ -10,13 +10,13 @@
     <meta name="keywords" content="DonutSMP, donutsmp market, donutsmp shop, купить вещи donutsmp, спавнер скелетов donutsmp, игровая валюта donutsmp, элитра, незерит, аукцион donutsmp, mineshop">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://donutsmp-market.netlify.app/">
- 
+
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="MineShop — DonutSMP Market & Auction">
     <meta property="og:description" content="Купить игровую валюту, спавнеры и редкие вещи на сервере DonutSMP по лучшим ценам.">
     <meta property="og:site_name" content="MineShop">
- 
+
     <!-- Schema.org Structured Data for Fast Indexing -->
     <script type="application/ld+json">
     {
@@ -27,7 +27,7 @@
       "url": "https://donutsmp-market.netlify.app/"
     }
     </script>
- 
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -49,16 +49,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
     <style>
         :root {
             --accent-rgb: 139, 92, 246;
             --emerald-rgb: 16, 185, 129;
         }
- 
+
         body {
             font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
         }
- 
+
         /* ---------- Base transitions (kept, refined) ---------- */
         .modal-overlay {
             transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
@@ -80,7 +81,7 @@
         .modal-visible .modal-content {
             transform: scale(1) translateY(0);
         }
- 
+
         /* ---------- Buttons: shine sweep + press ring ---------- */
         .interactive-btn {
             position: relative;
@@ -114,7 +115,7 @@
             0% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.45); }
             100% { box-shadow: 0 0 0 12px rgba(var(--accent-rgb), 0); }
         }
- 
+
         /* ---------- Product cards: lift, glow border, staggered entrance ---------- */
         .product-card {
             position: relative;
@@ -149,7 +150,7 @@
             from { opacity: 0; transform: translateY(18px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
- 
+
         /* ---------- Ambient background blobs ---------- */
         .bg-blob {
             position: absolute;
@@ -164,14 +165,14 @@
             33% { transform: translate(24px, -18px) scale(1.06); }
             66% { transform: translate(-18px, 14px) scale(0.96); }
         }
- 
+
         /* ---------- Subtle dotted grid backdrop ---------- */
         .bg-grid {
             background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
             background-size: 26px 26px;
             mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
         }
- 
+
         /* ---------- Headline shimmer accent ---------- */
         .shimmer-text {
             background: linear-gradient(90deg, #ffffff 0%, rgb(var(--accent-rgb)) 45%, #ffffff 90%);
@@ -184,7 +185,7 @@
         @keyframes shimmer {
             to { background-position: -200% center; }
         }
- 
+
         /* ---------- Live badge pulse ring ---------- */
         .pulse-ring {
             position: relative;
@@ -201,7 +202,7 @@
             0% { transform: scale(1); opacity: 0.8; }
             100% { transform: scale(2.2); opacity: 0; }
         }
- 
+
         /* ---------- Fade-and-rise reveal (JS toggles .in-view) ---------- */
         .reveal {
             opacity: 0;
@@ -212,13 +213,13 @@
             opacity: 1;
             transform: translateY(0);
         }
- 
+
         /* ---------- Custom scrollbar ---------- */
         ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: #0b0e14; }
         ::-webkit-scrollbar-thumb { background: #262c38; border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: rgb(var(--accent-rgb)); }
- 
+
         /* ---------- Logo glow breathing ---------- */
         .logo-badge {
             animation: logoGlow 3.2s ease-in-out infinite;
@@ -227,7 +228,7 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.35), 0 10px 25px -10px rgba(var(--accent-rgb), 0.6); }
             50% { box-shadow: 0 0 0 6px rgba(var(--accent-rgb), 0.08), 0 10px 25px -10px rgba(var(--accent-rgb), 0.6); }
         }
- 
+
         /* ---------- Accessibility: respect reduced motion ---------- */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -237,14 +238,14 @@
                 scroll-behavior: auto !important;
             }
         }
- 
+
         html {
             scroll-behavior: smooth;
         }
     </style>
 </head>
 <body class="bg-darkbg text-gray-100 font-sans antialiased min-h-screen flex flex-col justify-between">
- 
+
     <header class="border-b border-gray-800 bg-darkbg/85 backdrop-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -271,7 +272,7 @@
                     <span class="hidden sm:inline">Cart</span>
                     <span id="cartCountBadge" class="bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
- 
+
                 <div id="userBadge" class="hidden items-center space-x-2 bg-cardbg border border-gray-800 px-3 py-1.5 rounded-xl text-xs font-semibold">
                     <span id="roleIcon" class="w-2 h-2 rounded-full"></span>
                     <span id="roleText" class="text-gray-300"></span>
@@ -283,7 +284,7 @@
             </div>
         </div>
     </header>
- 
+
     <main class="flex-grow">
         <section class="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
             <div class="absolute inset-0 bg-grid opacity-60"></div>
@@ -311,7 +312,7 @@
                 <span>New here? Use code <span class="font-mono font-bold text-amber-200">WELCOME15</span> for 15% off your first order</span>
             </div>
         </section>
- 
+
         <section id="admin-panel-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 hidden">
             <div class="bg-cardbg border border-purple-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-purple-500/10 w-96 h-96 rounded-full blur-3xl pointer-events-none"></div>
@@ -332,7 +333,7 @@
                         </div>
                     </div>
                 </div>
- 
+
                 <div class="w-full overflow-x-auto">
                     <table class="w-full text-left border-collapse min-w-[1000px]">
                         <thead>
@@ -353,7 +354,7 @@
                         No active orders at the moment.
                     </div>
                 </div>
- 
+
                 <div class="mt-8 pt-6 border-t border-gray-800/70">
                     <h3 class="text-lg font-bold mb-3 flex items-center space-x-2"><i class="fa-solid fa-user-group text-purple-400"></i><span>Referral Program — Pending Rewards</span></h3>
                     <div class="w-full overflow-x-auto">
@@ -377,11 +378,11 @@
                 </div>
             </div>
         </section>
- 
+
         <section id="live-auction" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="reveal bg-cardbg border border-emerald-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 left-0 bg-emerald-500/5 w-96 h-96 rounded-full blur-3xl pointer-events-none"></div>
- 
+
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                     <div>
                         <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
@@ -395,17 +396,17 @@
                         <span class="font-semibold">Live Feed Active</span>
                     </div>
                 </div>
- 
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="liveAuctionGrid"></div>
             </div>
         </section>
- 
+
         <section id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="reveal flex justify-between items-center mb-8">
                 <h2 class="text-2xl font-bold border-l-4 border-accent pl-3">Server Catalog</h2>
                 <span class="text-sm text-gray-400">Server: <span class="text-white font-semibold">donutsmp.net</span></span>
             </div>
- 
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
@@ -444,7 +445,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -462,7 +463,7 @@
                         <span class="text-xs font-semibold text-accent uppercase tracking-wider">Spawner</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Skeleton Spawner</h3>
                         <p class="text-gray-400 text-sm mb-4">$0.70 each. Min: 5, Max: 50 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="skelVal" class="text-white font-bold">5</span></label>
                             <input type="range" id="skelRange" min="5" max="50" value="5" step="1" oninput="updateSkeleton()" class="w-full accent-accent cursor-pointer">
@@ -481,7 +482,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -499,7 +500,7 @@
                         <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Rare Item</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Dragon Head</h3>
                         <p class="text-gray-400 text-sm mb-4">$8.50 each. Min: 1, Max: 5 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="dragonVal" class="text-white font-bold">1</span></label>
                             <input type="range" id="dragonRange" min="1" max="5" value="1" step="1" oninput="updateDragon()" class="w-full accent-accent cursor-pointer">
@@ -518,7 +519,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -536,7 +537,7 @@
                         <span class="text-xs font-semibold text-orange-500 uppercase tracking-wider">Trophy / Head</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Piglin Head</h3>
                         <p class="text-gray-400 text-sm mb-4">$0.20 each. Min: 1, Max: 20 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="piglinVal" class="text-white font-bold">1</span></label>
                             <input type="range" id="piglinRange" min="1" max="20" value="1" step="1" oninput="updatePiglin()" class="w-full accent-accent cursor-pointer">
@@ -555,7 +556,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -573,7 +574,7 @@
                         <span class="text-xs font-semibold text-yellow-400 uppercase tracking-wider">Utility / Combat</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Totem of Undying</h3>
                         <p class="text-gray-400 text-sm mb-4">$0.05 each. Min: 5, Max: 50 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="totemVal" class="text-white font-bold">5</span></label>
                             <input type="range" id="totemRange" min="5" max="50" value="5" step="1" oninput="updateTotem()" class="w-full accent-accent cursor-pointer">
@@ -592,7 +593,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between opacity-75 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -613,7 +614,7 @@
                         <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Flight / Rare</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Elytra</h3>
                         <p class="text-gray-400 text-sm mb-4">$35.00 each. Limit: 1 per 1 day.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-500 mb-1">Quantity: <span class="text-gray-400 font-bold">0</span> (Unavailable)</label>
                             <input type="range" disabled class="w-full opacity-40 cursor-not-allowed">
@@ -632,7 +633,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -650,7 +651,7 @@
                         <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Block</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Netherite Block</h3>
                         <p class="text-gray-400 text-sm mb-4">$4.00 each. Min: 1, Max: 5 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="nblockVal" class="text-white font-bold">1</span></label>
                             <input type="range" id="nblockRange" min="1" max="5" value="1" step="1" oninput="updateNBlock()" class="w-full accent-accent cursor-pointer">
@@ -669,7 +670,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -687,7 +688,7 @@
                         <span class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Ingot</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Netherite Ingot</h3>
                         <p class="text-gray-400 text-sm mb-4">$0.60 each. Min: 5, Max: 30 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="ningotVal" class="text-white font-bold">5</span></label>
                             <input type="range" id="ningotRange" min="5" max="30" value="5" step="1" oninput="updateNIngot()" class="w-full accent-accent cursor-pointer">
@@ -706,7 +707,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
                     <div>
                         <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
@@ -724,7 +725,7 @@
                         <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Block</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Gilded Blackstone</h3>
                         <p class="text-gray-400 text-sm mb-4">$0.30 each. Min: 8, Max: 50 per order.</p>
- 
+
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="gildedVal" class="text-white font-bold">8</span></label>
                             <input type="range" id="gildedRange" min="8" max="50" value="8" step="1" oninput="updateGilded()" class="w-full accent-accent cursor-pointer">
@@ -743,10 +744,10 @@
                         </button>
                     </div>
                 </div>
- 
+
             </div>
         </section>
- 
+
         <!-- ================= CUSTOMER REVIEWS ================= -->
         <section id="reviews" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="reveal bg-cardbg border border-amber-500/25 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
@@ -763,14 +764,14 @@
                         <i class="fa-solid fa-pen"></i> <span>Leave a Review</span>
                     </button>
                 </div>
- 
+
                 <div id="reviewsGrid" class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
                 <div id="reviewsEmptyMessage" class="relative py-8 text-center text-gray-500 text-sm hidden">
                     No reviews yet — be the first to share your experience!
                 </div>
             </div>
         </section>
- 
+
         <!-- ================= FAQ ================= -->
         <section id="faq" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="reveal bg-cardbg border border-gray-800 rounded-3xl p-6 sm:p-10 shadow-2xl">
@@ -781,7 +782,7 @@
                 <div id="faqList" class="space-y-3"></div>
             </div>
         </section>
- 
+
         <!-- ================= REFERRAL PROGRAM ================= -->
         <section id="referral" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="reveal bg-gradient-to-br from-accent/15 via-cardbg to-emerald-500/10 border border-accent/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
@@ -807,7 +808,7 @@
                 </div>
             </div>
         </section>
- 
+
         <section id="how-it-works" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="reveal bg-cardbg border border-gray-800 rounded-3xl p-8 sm:p-12 shadow-2xl">
                 <h2 class="text-3xl font-black mb-8 text-center bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
@@ -845,7 +846,7 @@
                 </div>
             </div>
         </section>
- 
+
         <section id="support" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="reveal bg-cardbg border border-gray-800 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-accent/5 w-80 h-80 rounded-full blur-3xl pointer-events-none"></div>
@@ -859,7 +860,7 @@
                         <p class="text-xs text-gray-400">We are here to help you with any purchase issues or questions.</p>
                     </div>
                 </div>
- 
+
                 <div class="space-y-4 text-gray-300 text-sm leading-relaxed">
                     <p>
                         If you have any problems with purchases, questions, or issues regarding your order, please contact us via email at:
@@ -882,7 +883,7 @@
             </div>
         </section>
     </main>
- 
+
     <footer id="contacts" class="border-t border-gray-800 bg-cardbg/50 mt-20 py-8 text-center text-sm text-gray-500">
         <div class="max-w-7xl mx-auto px-4 space-y-4">
             <!-- Free-Kassa Banner -->
@@ -898,7 +899,7 @@
             </div>
         </div>
     </footer>
- 
+
     <!-- Personal Account Modal -->
     <div id="accountModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
@@ -914,7 +915,7 @@
                     <p id="accEmailDisplay" class="text-xs text-gray-400"></p>
                 </div>
             </div>
- 
+
             <!-- Profile Block: Nickname and Rank -->
             <div class="bg-darkbg border border-gray-800 rounded-2xl p-5 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -933,7 +934,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <!-- Ranks Shop -->
             <div class="mb-6">
                 <h4 class="text-lg font-bold mb-3 flex items-center">
@@ -968,7 +969,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <!-- All-Time Purchase History -->
             <div>
                 <h4 class="text-lg font-bold mb-3 flex items-center">
@@ -993,7 +994,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <div class="mt-6 pt-4 border-t border-gray-800 flex justify-between items-center">
                 <button onclick="logoutUser()" class="interactive-btn bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-2 rounded-xl text-xs font-semibold transition">
                     <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Log Out
@@ -1004,7 +1005,7 @@
             </div>
         </div>
     </div>
- 
+
     <div id="cartModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative">
             <button onclick="closeCartModal()" class="interactive-btn absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -1019,12 +1020,12 @@
                     <p class="text-xs text-gray-400">Review your selected items before checkout</p>
                 </div>
             </div>
- 
+
             <div id="cartItemsContainer" class="space-y-3 max-h-52 overflow-y-auto mb-4 pr-1 divide-y divide-gray-800/60"></div>
             <div id="cartEmptyMessage" class="text-center py-8 text-gray-500 text-sm">
                 Your cart is empty. Add items from the catalog!
             </div>
- 
+
             <div id="promoSection" class="mb-4 pt-3 border-t border-gray-800 hidden">
                 <div class="flex space-x-2">
                     <input type="text" id="promoInput" placeholder="Enter promo code" class="flex-grow bg-darkbg border border-gray-700 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-accent text-white uppercase font-mono">
@@ -1034,12 +1035,12 @@
                 </div>
                 <p id="promoMessage" class="text-xs mt-1.5"></p>
             </div>
- 
+
             <div class="border-t border-gray-800 pt-4 mb-6 flex items-center justify-between">
                 <span class="text-sm font-semibold text-gray-400">Total Amount:</span>
                 <span id="cartTotalPrice" class="text-2xl font-black text-white">$0.00</span>
             </div>
- 
+
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-400 mb-1">Your Minecraft Nickname</label>
@@ -1051,7 +1052,7 @@
             </div>
         </div>
     </div>
- 
+
     <div id="directBuyModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-2xl max-w-md w-full p-6 relative">
             <button onclick="closeDirectModal()" class="interactive-btn absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -1076,7 +1077,7 @@
             </div>
         </div>
     </div>
- 
+
     <div id="authModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-2xl max-w-sm w-full p-6 relative">
             <button onclick="closeAuthModal()" class="interactive-btn absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -1106,7 +1107,7 @@
             </div>
         </div>
     </div>
- 
+
     <div id="screenMessageModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
         <div id="screenModalBox" class="modal-content bg-cardbg border border-amber-500/55 rounded-3xl max-w-lg w-full p-8 text-center relative shadow-2xl shadow-amber-500/10 transition-all">
             <div id="screenModalIcon" class="inline-flex p-4 rounded-full bg-amber-500/10 text-amber-400 mb-4 text-3xl">
@@ -1120,7 +1121,7 @@
             </button>
         </div>
     </div>
- 
+
     <div id="adminCoordsModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-purple-500/40 rounded-2xl max-w-md w-full p-6 relative">
             <button onclick="closeAdminCoordsModal()" class="interactive-btn absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -1140,7 +1141,7 @@
             </div>
         </div>
     </div>
- 
+
     <!-- Leave a Review Modal -->
     <div id="reviewModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-amber-500/30 rounded-2xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
@@ -1149,7 +1150,7 @@
             </button>
             <h3 class="text-xl font-bold mb-1"><i class="fa-solid fa-star text-amber-400 mr-1.5"></i> Leave a Review</h3>
             <p class="text-xs text-gray-400 mb-4">Visible to every player on every device — thanks for helping others trust MineShop.</p>
- 
+
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-400 mb-1">Your Minecraft Nickname</label>
@@ -1180,7 +1181,7 @@
             </div>
         </div>
     </div>
- 
+
     <!-- Screenshot Lightbox -->
     <div id="lightboxModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[60] p-4" onclick="closeLightbox(event)">
         <button onclick="closeLightbox(event)" class="interactive-btn absolute top-5 right-5 text-gray-300 hover:text-white text-2xl z-10">
@@ -1188,7 +1189,7 @@
         </button>
         <img id="lightboxImage" class="modal-content max-w-full max-h-[85vh] rounded-2xl border border-gray-700 shadow-2xl" src="">
     </div>
- 
+
     <!-- Referral Link Modal -->
     <div id="referralModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-accent/40 rounded-2xl max-w-md w-full p-6 relative text-center">
@@ -1200,19 +1201,19 @@
             </div>
             <h3 class="text-xl font-bold mb-1">Share Your Referral Link</h3>
             <p class="text-xs text-gray-400 mb-5">Send this link to a friend. When they sign up and place their first order, you both get rewarded.</p>
- 
+
             <div class="flex items-center bg-darkbg border border-gray-700 rounded-xl overflow-hidden mb-4">
                 <input id="referralModalLinkInput" readonly value="" class="flex-grow bg-transparent px-3 py-3 text-xs text-gray-300 outline-none font-mono truncate text-left">
             </div>
- 
+
             <button id="referralModalCopyBtn" onclick="copyReferralLink()" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-3 rounded-xl font-bold transition shadow-lg shadow-accent/20 flex items-center justify-center space-x-2">
                 <i class="fa-solid fa-copy"></i> <span>Copy Link</span>
             </button>
- 
+
             <p class="text-[11px] text-gray-500 mt-4">Your referral code: <span id="referralModalCodeText" class="font-mono text-accent"></span></p>
         </div>
     </div>
- 
+
     <!-- Terms of Service Modal -->
     <div id="termsModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-2xl max-w-2xl w-full p-6 sm:p-8 relative max-h-[85vh] overflow-y-auto">
@@ -1235,7 +1236,7 @@
             </div>
         </div>
     </div>
- 
+
     <!-- Privacy Policy Modal -->
     <div id="privacyModal" class="modal-overlay modal-hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="modal-content bg-cardbg border border-gray-800 rounded-2xl max-w-2xl w-full p-6 sm:p-8 relative max-h-[85vh] overflow-y-auto">
@@ -1258,12 +1259,12 @@
             </div>
         </div>
     </div>
- 
+
     <script>
         const SUPABASE_URL = 'https://gybcnlymntrgmaippawe.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmNubHltbnRyZ21haXBwYXdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mjg2NTYsImV4cCI6MjEwNDUwNDY1Nn0.Bz6MKS4x20AszDO8JzluKsCcdG9DHRbchqxJDrQvHCw';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
- 
+
         let currentUser = null; 
         let usersDB = [];      
         let ordersList = [];   
@@ -1271,12 +1272,12 @@
         let appliedPromo = null; 
         let ronaldoUsedByUsers = {}; 
         let lastCheckedOrderStatus = {};
- 
+
         const adminAccounts = [
             { email: 'mehtiagazade07@gmail.com', password: 'Agayev070' },
             { email: 'game_pro12328@gmail.com', password: 'GamePro070' }
         ];
- 
+
         let liveAuctionData = [
             { name: 'Elytra', price: 347452121, change: '+2.4%', trend: 'up' },
             { name: 'Dragon Head', price: 68595501, change: '-1.2%', trend: 'down' },
@@ -1287,11 +1288,11 @@
             { name: 'Piglin Head', price: 805044, change: '-2.1%', trend: 'down' },
             { name: 'Totem of Undying', price: 68153, change: '+1.0%', trend: 'up' }
         ];
- 
+
         // ===================================================================
         // NEW FEATURES: Reviews, FAQ, Promo Codes, Referral Program
         // ===================================================================
- 
+
         // ---- Promo codes (max 15%, one-time use per account, cross-device via Supabase) ----
         // NOTE: all percentages below are intentionally capped at 15% or less.
         const PROMO_CODES = {
@@ -1301,7 +1302,7 @@
             'FRIEND10':  { percent: 10, label: '10% off (referral welcome bonus)' }
         };
         let appliedGenericPromo = null; // { code, percent }
- 
+
         // ---- FAQ content ----
         const faqData = [
             { q: 'How fast will I receive my order?', a: 'Delivery usually takes anywhere from a few minutes up to a couple of hours, depending on admin availability. As soon as your order is processed, you\'ll receive the coordinates and instructions right on your screen and in your Personal Account.' },
@@ -1313,7 +1314,7 @@
             { q: 'How does the referral program work?', a: 'Log in to your account, copy your personal referral link, and send it to a friend. When they sign up and place their first order, you both get rewarded by our team.' },
             { q: 'What if I never received my item?', a: 'Contact us by email with your order number and a screenshot. We\'ll look into it, and if delivery genuinely failed, we\'ll redeliver the items or issue a refund.' }
         ];
- 
+
         // ---- Referral helpers ----
         function generateReferralCode(email) {
             let base = (email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -1321,11 +1322,11 @@
             for (let i = 0; i < email.length; i++) hash = (hash * 31 + email.charCodeAt(i)) >>> 0;
             return (base.slice(0, 6) || 'user') + '-' + hash.toString(36).slice(0, 5);
         }
- 
+
         function getPendingReferralCode() {
             return localStorage.getItem('mineshop_pending_ref') || null;
         }
- 
+
         (function captureReferralFromURL() {
             const params = new URLSearchParams(window.location.search);
             const ref = params.get('ref');
@@ -1333,13 +1334,13 @@
                 localStorage.setItem('mineshop_pending_ref', ref.trim());
             }
         })();
- 
- 
+
+
         function getDeviceInfo() {
             const ua = navigator.userAgent;
             let browser = "Unknown Browser";
             let os = "Unknown OS";
- 
+
             if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
             else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
             else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
@@ -1347,16 +1348,16 @@
             else if (ua.indexOf("Edge") > -1) browser = "Microsoft Edge";
             else if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
             else if (ua.indexOf("Safari") > -1) browser = "Apple Safari";
- 
+
             if (ua.indexOf("Win") > -1) os = "Windows";
             else if (ua.indexOf("Mac") > -1) os = "MacOS";
             else if (ua.indexOf("Linux") > -1) os = "Linux";
             else if (ua.indexOf("Android") > -1) os = "Android";
             else if (ua.indexOf("like Mac") > -1) os = "iOS";
- 
+
             return `${os} / ${browser}`;
         }
- 
+
         function trackUserVisit(email) {
             if (!email) return 1;
             let visitsKey = 'mineshop_visits_' + email.toLowerCase();
@@ -1364,12 +1365,12 @@
             localStorage.setItem(visitsKey, visits);
             return visits;
         }
- 
+
         function renderLiveAuction() {
             const grid = document.getElementById('liveAuctionGrid');
             if (!grid) return;
             grid.innerHTML = '';
- 
+
             liveAuctionData.forEach(item => {
                 let diff = (Math.random() * 2000 - 1000);
                 item.price = Math.max(100, Math.floor(item.price + diff));
@@ -1377,7 +1378,7 @@
                 let formattedPrice = '$' + item.price.toLocaleString();
                 let trendColor = item.trend === 'up' ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10';
                 let iconTrend = item.trend === 'up' ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
- 
+
                 let card = document.createElement('div');
                 card.className = 'bg-darkbg/80 border border-gray-800 p-4 rounded-2xl flex flex-col justify-between hover:border-emerald-500/40 transition';
                 card.innerHTML = `
@@ -1398,9 +1399,9 @@
                 grid.appendChild(card);
             });
         }
- 
+
         setInterval(renderLiveAuction, 4000);
- 
+
         async function loadData() {
             let savedUsers = localStorage.getItem('mineshop_users');
             if (savedUsers) {
@@ -1408,12 +1409,12 @@
             } else {
                 usersDB = [];
             }
- 
+
             let savedRonaldoUsage = localStorage.getItem('mineshop_ronaldo_usage');
             if (savedRonaldoUsage) {
                 try { ronaldoUsedByUsers = JSON.parse(savedRonaldoUsage); } catch(e) { ronaldoUsedByUsers = {}; }
             }
- 
+
             adminAccounts.forEach(adm => {
                 let adminIndex = usersDB.findIndex(u => u.email.toLowerCase() === adm.email.toLowerCase());
                 if (adminIndex !== -1) {
@@ -1424,9 +1425,9 @@
                 }
             });
             saveUsers();
- 
+
             await loadOrdersFromSupabase();
- 
+
             let sessionUser = sessionStorage.getItem('mineshop_session');
             if(sessionUser) {
                 try { 
@@ -1452,7 +1453,7 @@
             loadReviews();
             updateReferralBox();
         }
- 
+
         function saveUsers() {
             localStorage.setItem('mineshop_users', JSON.stringify(usersDB));
             if (currentUser) {
@@ -1462,16 +1463,16 @@
                 }
             }
         }
- 
+
         function saveRonaldoUsage() {
             localStorage.setItem('mineshop_ronaldo_usage', JSON.stringify(ronaldoUsedByUsers));
         }
- 
+
         async function loadOrdersFromSupabase() {
             let { data, error } = await supabaseClient
                 .from('orders')
                 .select('*');
- 
+
             if (error) {
                 console.error('Error loading orders:', error);
                 ordersList = [];
@@ -1490,7 +1491,7 @@
                     visit_count: row.visit_count || 1,
                     last_visit: row.last_visit || ''
                 }));
- 
+
                 usersDB.forEach(user => {
                     let userOrders = ordersList.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
                     user.purchasesCount = userOrders.length;
@@ -1510,12 +1511,12 @@
                     }
                 });
                 saveUsers();
- 
+
                 if (currentUser) {
                     let updatedCurr = usersDB.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
                     if (updatedCurr) currentUser = updatedCurr;
                 }
- 
+
                 if (currentUser && currentUser.role !== 'Admin') {
                     ordersList.forEach(ord => {
                         if (ord.email.toLowerCase() === currentUser.email.toLowerCase()) {
@@ -1531,7 +1532,7 @@
                 renderOrdersTable();
             }
         }
- 
+
         async function saveOrderToSupabase(newOrder) {
             let { data, error } = await supabaseClient
                 .from('orders')
@@ -1550,7 +1551,7 @@
                         last_visit: new Date().toISOString()
                     }
                 ]);
- 
+
             if (error) {
                 console.error('Error saving order:', error);
                 alert('Error submitting order to database!');
@@ -1558,14 +1559,14 @@
                 await loadOrdersFromSupabase();
             }
         }
- 
+
         async function clearAllOrders() {
             if(confirm('Are you sure you want to clear all order history?')) {
                 let { error } = await supabaseClient
                     .from('orders')
                     .delete()
                     .neq('order_id', '___empty___');
- 
+
                 if (error) {
                     console.error('Error clearing:', error);
                 } else {
@@ -1574,7 +1575,7 @@
                 }
             }
         }
- 
+
         // ===================================================================
         // FAQ
         // ===================================================================
@@ -1597,7 +1598,7 @@
                 list.appendChild(wrap);
             });
         }
- 
+
         function toggleFaq(idx) {
             const answer = document.getElementById('faqAnswer' + idx);
             const icon = document.getElementById('faqIcon' + idx);
@@ -1609,20 +1610,20 @@
                 icon.classList.add('rotate-180');
             }
         }
- 
+
         // ===================================================================
         // REVIEWS (stored in Supabase — visible to every player, every device)
         // ===================================================================
         let reviewsList = [];
         let selectedReviewRating = 5;
         let reviewScreenshotFile = null;
- 
+
         async function loadReviews() {
             const { data, error } = await supabaseClient
                 .from('reviews')
                 .select('*')
                 .order('created_at', { ascending: false });
- 
+
             if (error) {
                 console.error('Error loading reviews:', error);
                 showReviewsSetupNotice(error);
@@ -1632,7 +1633,7 @@
             renderReviews();
         }
         setInterval(loadReviews, 15000);
- 
+
         function showReviewsSetupNotice(error) {
             const avgLine = document.getElementById('reviewsAvgLine');
             const emptyMsg = document.getElementById('reviewsEmptyMessage');
@@ -1643,47 +1644,47 @@
             emptyMsg.textContent = 'Reviews are temporarily unavailable. (' + (error && error.message ? error.message : 'connection error') + ')';
             avgLine.textContent = 'Reviews are being set up — check back soon.';
         }
- 
+
         function renderReviews() {
             const grid = document.getElementById('reviewsGrid');
             const emptyMsg = document.getElementById('reviewsEmptyMessage');
             const avgLine = document.getElementById('reviewsAvgLine');
             if (!grid) return;
- 
+
             grid.innerHTML = '';
- 
+
             if (reviewsList.length === 0) {
                 emptyMsg.classList.remove('hidden');
                 avgLine.textContent = 'No reviews yet — be the first to share your experience!';
                 return;
             }
             emptyMsg.classList.add('hidden');
- 
+
             let avg = (reviewsList.reduce((s, r) => s + (r.rating || 0), 0) / reviewsList.length).toFixed(1);
             avgLine.innerHTML = `<span class="text-amber-400 font-bold">${avg} <i class="fa-solid fa-star text-xs"></i></span> average from ${reviewsList.length} review${reviewsList.length === 1 ? '' : 's'}`;
- 
+
             reviewsList.forEach(review => {
                 const card = document.createElement('div');
                 card.className = 'product-card bg-darkbg/70 border border-gray-800 rounded-2xl p-4 flex flex-col';
- 
+
                 let stars = '';
                 for (let i = 1; i <= 5; i++) {
                     stars += `<i class="fa-solid fa-star ${i <= review.rating ? 'text-amber-400' : 'text-gray-700'} text-xs"></i>`;
                 }
- 
+
                 let initials = (review.nickname || '?').charAt(0).toUpperCase();
                 let dateStr = review.created_at ? new Date(review.created_at).toLocaleDateString() : '';
- 
+
                 let screenshotHtml = '';
                 if (review.screenshot_url) {
                     screenshotHtml = `<img src="${review.screenshot_url}" onclick="openLightbox('${review.screenshot_url}')" class="mt-3 rounded-xl border border-gray-700 w-full h-32 object-cover cursor-zoom-in hover:opacity-90 transition">`;
                 }
- 
+
                 let deleteBtn = '';
                 if (currentUser && currentUser.role === 'Admin') {
                     deleteBtn = `<button onclick="deleteReview('${review.id}')" class="interactive-btn text-red-400 hover:text-red-300 text-xs ml-auto"><i class="fa-solid fa-trash"></i></button>`;
                 }
- 
+
                 card.innerHTML = `
                     <div class="flex items-center space-x-3 mb-2">
                         <div class="w-9 h-9 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center text-sm shrink-0">${initials}</div>
@@ -1701,7 +1702,7 @@
                 grid.appendChild(card);
             });
         }
- 
+
         async function deleteReview(id) {
             if (!currentUser || currentUser.role !== 'Admin') return;
             if (!confirm('Delete this review?')) return;
@@ -1713,7 +1714,7 @@
                 await loadReviews();
             }
         }
- 
+
         function renderStarPicker() {
             const picker = document.getElementById('reviewStarPicker');
             if (!picker) return;
@@ -1725,7 +1726,7 @@
                 picker.appendChild(star);
             }
         }
- 
+
         function openReviewModal() {
             selectedReviewRating = 5;
             reviewScreenshotFile = null;
@@ -1739,13 +1740,13 @@
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeReviewModal() {
             const modal = document.getElementById('reviewModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         document.addEventListener('change', function(e) {
             if (e.target && e.target.id === 'reviewScreenshotInput') {
                 const file = e.target.files[0];
@@ -1759,13 +1760,13 @@
                 reader.readAsDataURL(file);
             }
         });
- 
+
         async function submitReview() {
             const nickname = document.getElementById('reviewNickInput').value.trim();
             const item = document.getElementById('reviewItemInput').value.trim();
             const comment = document.getElementById('reviewCommentInput').value.trim();
             const btn = document.getElementById('reviewSubmitBtn');
- 
+
             if (!nickname) {
                 alert('Please enter your Minecraft nickname.');
                 return;
@@ -1774,10 +1775,10 @@
                 alert('Please write a short comment about your experience.');
                 return;
             }
- 
+
             btn.disabled = true;
             btn.textContent = 'Submitting...';
- 
+
             let screenshotUrl = null;
             let screenshotFailed = false;
             try {
@@ -1787,7 +1788,7 @@
                     const { error: uploadError } = await supabaseClient.storage
                         .from('review-screenshots')
                         .upload(filePath, reviewScreenshotFile);
- 
+
                     if (uploadError) {
                         console.error('Screenshot upload error:', uploadError);
                         screenshotFailed = true;
@@ -1798,7 +1799,7 @@
                         screenshotUrl = publicUrlData ? publicUrlData.publicUrl : null;
                     }
                 }
- 
+
                 const { error } = await supabaseClient.from('reviews').insert([{
                     nickname: nickname,
                     item: item,
@@ -1806,7 +1807,7 @@
                     comment: comment,
                     screenshot_url: screenshotUrl
                 }]);
- 
+
                 if (error) {
                     console.error('Error submitting review:', error);
                     alert('Could not submit your review.\n\nReason: ' + (error.message || 'unknown error') + '\n\nIf you are the site owner, make sure the "reviews" table exists in Supabase.');
@@ -1822,21 +1823,21 @@
                 btn.textContent = 'Submit Review';
             }
         }
- 
+
         function openLightbox(url) {
             document.getElementById('lightboxImage').src = url;
             const modal = document.getElementById('lightboxModal');
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeLightbox(e) {
             if (e && e.target && e.target.tagName === 'IMG' && e.target.id !== 'lightboxImage') return;
             const modal = document.getElementById('lightboxModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         // ===================================================================
         // TERMS / PRIVACY MODALS
         // ===================================================================
@@ -1860,16 +1861,73 @@
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         // ===================================================================
         // REFERRAL PROGRAM
         // ===================================================================
         const SITE_DOMAIN = 'https://www.mineshop.lol/';
- 
+
+        // ===================================================================
+        // FREEKASSA PAYMENT INTEGRATION (SCI / simple form method)
+        // ===================================================================
+        // Fill these in from https://merchant.freekassa.net/settings after you
+        // create your "kassa" (shop). Do NOT put Secret Word 2 here — that one
+        // stays private on the notification/webhook side only.
+        const FREEKASSA_MERCHANT_ID = '76096';   // e.g. '177'
+        const FREEKASSA_SECRET_WORD_1 = 'RDkz/jXs}9y.7B_'; // "Секретное слово" (not "Секретное слово 2")
+        const FREEKASSA_CURRENCY = 'USD'; // must match a currency enabled on your kassa: RUB, USD, EUR, UAH, KZT
+
+        function buildFreeKassaSignature(amount, orderId) {
+            // MD5("merchant_id:amount:secret_word:currency:order_id") per FreeKassa SCI docs
+            const raw = `${FREEKASSA_MERCHANT_ID}:${amount}:${FREEKASSA_SECRET_WORD_1}:${FREEKASSA_CURRENCY}:${orderId}`;
+            return md5(raw);
+        }
+
+        function redirectToFreeKassa(orderId, amount, email) {
+            if (FREEKASSA_MERCHANT_ID === 'YOUR_MERCHANT_ID' || FREEKASSA_SECRET_WORD_1 === 'YOUR_SECRET_WORD_1') {
+                alert('FreeKassa is not configured yet. The site owner needs to add their Merchant ID and Secret Word 1 in the code.');
+                return;
+            }
+
+            const amountStr = Number(amount).toFixed(2);
+            const paymentOrderId = orderId.replace('#', '');
+            const sign = buildFreeKassaSignature(amountStr, paymentOrderId);
+
+            const params = new URLSearchParams({
+                m: FREEKASSA_MERCHANT_ID,
+                oa: amountStr,
+                currency: FREEKASSA_CURRENCY,
+                o: paymentOrderId,
+                s: sign,
+                em: email || '',
+                lang: 'en'
+            });
+
+            window.location.href = `https://pay.fk.money/?${params.toString()}`;
+        }
+
+        // ---- Handle the return from FreeKassa (success_url / failure_url) ----
+        (function handlePaymentReturn() {
+            const params = new URLSearchParams(window.location.search);
+            const paymentStatus = params.get('payment');
+            const orderRef = params.get('order');
+            if (!paymentStatus) return;
+
+            window.addEventListener('DOMContentLoaded', () => {
+                if (paymentStatus === 'success') {
+                    alert('Payment received!' + (orderRef ? ' Order ' + orderRef + ' is' : ' Your order is') + ' now awaiting delivery. You can track it from your Personal Account.');
+                } else if (paymentStatus === 'fail') {
+                    alert('Payment was not completed' + (orderRef ? ' for order ' + orderRef : '') + '. You can try again from your cart or account page.');
+                }
+                const cleanUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            });
+        })();
+
         function updateReferralBox() {
             const box = document.getElementById('referralBox');
             if (!box) return;
- 
+
             if (!currentUser) {
                 box.innerHTML = `
                     <p class="text-sm text-gray-400 mb-4">Log in or create a free account to get your personal referral link.</p>
@@ -1879,12 +1937,12 @@
                 `;
                 return;
             }
- 
+
             if (!currentUser.referralCode) {
                 currentUser.referralCode = generateReferralCode(currentUser.email);
                 saveUsers();
             }
- 
+
             box.innerHTML = `
                 <p class="text-sm text-gray-400 mb-4">You're all set! Get your personal referral link and share it with a friend to start earning rewards.</p>
                 <button onclick="openReferralModal()" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-2.5 rounded-xl font-bold transition shadow-lg shadow-accent/20 flex items-center justify-center space-x-2">
@@ -1892,7 +1950,7 @@
                 </button>
             `;
         }
- 
+
         function openReferralModal() {
             if (!currentUser) {
                 openAuthModal();
@@ -1905,30 +1963,30 @@
             const link = SITE_DOMAIN + '?ref=' + currentUser.referralCode;
             document.getElementById('referralModalLinkInput').value = link;
             document.getElementById('referralModalCodeText').textContent = currentUser.referralCode;
- 
+
             const modal = document.getElementById('referralModal');
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeReferralModal() {
             const modal = document.getElementById('referralModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         function copyReferralLink() {
             const input = document.getElementById('referralModalLinkInput');
             input.select();
             input.setSelectionRange(0, 99999);
             const btn = document.getElementById('referralModalCopyBtn');
             const restoreLabel = () => { btn.innerHTML = '<i class="fa-solid fa-copy"></i> <span>Copy Link</span>'; };
- 
+
             const showCopied = () => {
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
                 setTimeout(restoreLabel, 1800);
             };
- 
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(input.value).then(showCopied).catch(() => {
                     document.execCommand('copy');
@@ -1939,12 +1997,12 @@
                 showCopied();
             }
         }
- 
+
         async function recordReferralIfPending(newUser) {
             const pendingRef = getPendingReferralCode();
             if (!pendingRef) return;
             if (pendingRef === newUser.referralCode) return; // can't refer yourself
- 
+
             const referrer = usersDB.find(u => u.referralCode === pendingRef);
             const { error } = await supabaseClient.from('referrals').insert([{
                 referrer_email: referrer ? referrer.email : 'unknown',
@@ -1952,7 +2010,7 @@
                 referred_email: newUser.email,
                 rewarded: false
             }]);
- 
+
             if (error) {
                 console.error('Error recording referral:', error);
             } else {
@@ -1961,30 +2019,30 @@
                 localStorage.removeItem('mineshop_pending_ref');
             }
         }
- 
+
         async function loadReferralsForAdmin() {
             if (!currentUser || currentUser.role !== 'Admin') return;
             const { data, error } = await supabaseClient
                 .from('referrals')
                 .select('*')
                 .order('created_at', { ascending: false });
- 
+
             const tbody = document.getElementById('adminReferralsTable');
             const emptyMsg = document.getElementById('noReferralsMessage');
             if (!tbody) return;
- 
+
             if (error) {
                 console.error('Error loading referrals:', error);
                 return;
             }
- 
+
             tbody.innerHTML = '';
             if (!data || data.length === 0) {
                 emptyMsg.classList.remove('hidden');
                 return;
             }
             emptyMsg.classList.add('hidden');
- 
+
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-800/30 transition';
@@ -1994,7 +2052,7 @@
                 let actionBtn = row.rewarded
                     ? ''
                     : `<button onclick="markReferralRewarded('${row.id}')" class="interactive-btn bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mark Rewarded</button>`;
- 
+
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-gray-300">${row.referrer_email}</td>
                     <td class="py-2.5 px-3 font-mono text-accent">${row.referrer_code}</td>
@@ -2006,7 +2064,7 @@
                 tbody.appendChild(tr);
             });
         }
- 
+
         async function markReferralRewarded(id) {
             const { error } = await supabaseClient.from('referrals').update({ rewarded: true }).eq('id', id);
             if (error) {
@@ -2015,7 +2073,7 @@
                 await loadReferralsForAdmin();
             }
         }
- 
+
         // ===================================================================
         // PROMO CODE USAGE TRACKING (cross-device, via Supabase)
         // ===================================================================
@@ -2032,7 +2090,7 @@
             }
             return data && data.length > 0;
         }
- 
+
         async function markPromoCodeUsed(email, code) {
             const { error } = await supabaseClient.from('promo_usage').insert([{
                 email: email.toLowerCase(),
@@ -2040,9 +2098,9 @@
             }]);
             if (error) console.error('Error marking promo used:', error);
         }
- 
+
         loadData();
- 
+
         function toggleCardInfo(index) {
             let front = document.getElementById('card-front-' + index);
             let back = document.getElementById('card-back-' + index);
@@ -2056,70 +2114,70 @@
                 front.classList.remove('opacity-0');
             }
         }
- 
+
         function updateMoney() {
             let val = document.getElementById('moneyRange').value;
             document.getElementById('moneyVal').textContent = val;
             let price = (val * 0.30).toFixed(2);
             document.getElementById('moneyPrice').textContent = '$' + price;
         }
- 
+
         function updateSkeleton() {
             let valNum = document.getElementById('skelRange').value;
             document.getElementById('skelVal').textContent = valNum;
             let price = (valNum * 0.70).toFixed(2);
             document.getElementById('skelPrice').textContent = '$' + price;
         }
- 
+
         function updateDragon() {
             let val = document.getElementById('dragonRange').value;
             document.getElementById('dragonVal').textContent = val;
             let price = (val * 8.50).toFixed(2);
             document.getElementById('dragonPrice').textContent = '$' + price;
         }
- 
+
         function updatePiglin() {
             let val = document.getElementById('piglinRange').value;
             document.getElementById('piglinVal').textContent = val;
             let price = (val * 0.20).toFixed(2);
             document.getElementById('piglinPrice').textContent = '$' + price;
         }
- 
+
         function updateTotem() {
             let val = document.getElementById('totemRange').value;
             document.getElementById('totemVal').textContent = val;
             let price = (val * 0.05).toFixed(2);
             document.getElementById('totemPrice').textContent = '$' + price;
         }
- 
+
         function updateNBlock() {
             let val = document.getElementById('nblockRange').value;
             document.getElementById('nblockVal').textContent = val;
             let price = (val * 4.00).toFixed(2);
             document.getElementById('nblockPrice').textContent = '$' + price;
         }
- 
+
         function updateNIngot() {
             let val = document.getElementById('ningotRange').value;
             document.getElementById('ningotVal').textContent = val;
             let price = (val * 0.60).toFixed(2);
             document.getElementById('ningotPrice').textContent = '$' + price;
         }
- 
+
         function updateGilded() {
             let val = document.getElementById('gildedRange').value;
             document.getElementById('gildedVal').textContent = val;
             let price = (val * 0.30).toFixed(2);
             document.getElementById('gildedPrice').textContent = '$' + price;
         }
- 
+
         function addCatalogItemToCart(name, qty, unitPrice) {
             if(!currentUser) {
                 alert('You must sign in or register an account before adding items to cart!');
                 openAuthModal();
                 return;
             }
- 
+
             let qtyStr = qty + ' pcs';
             let existingItem = cartItems.find(item => item.name === name);
             if (existingItem) {
@@ -2133,11 +2191,11 @@
                     unitPrice: unitPrice
                 });
             }
- 
+
             updateCartUI();
             alert(`Added ${qty}x ${name} to your cart!`);
         }
- 
+
         function removeFromCart(index) {
             cartItems.splice(index, 1);
             if (cartItems.length === 0) {
@@ -2146,37 +2204,37 @@
             }
             updateCartUI();
         }
- 
+
         async function applyPromoCode() {
             let rawCode = document.getElementById('promoInput').value.trim();
             let code = rawCode.toUpperCase();
             let msgEl = document.getElementById('promoMessage');
- 
+
             if (!code) {
                 msgEl.textContent = 'Please enter a promo code.';
                 msgEl.className = 'text-xs mt-1.5 text-red-400';
                 return;
             }
- 
+
             if (rawCode.toLowerCase() === 'ronaldo') {
                 if (!currentUser) {
                     msgEl.textContent = 'Please log in to use promo codes.';
                     msgEl.className = 'text-xs mt-1.5 text-red-400';
                     return;
                 }
- 
+
                 if (ronaldoUsedByUsers[currentUser.email.toLowerCase()]) {
                     msgEl.textContent = 'You have already used this promo code once!';
                     msgEl.className = 'text-xs mt-1.5 text-red-400';
                     return;
                 }
- 
+
                 if (appliedPromo === 'ronaldo') {
                     msgEl.textContent = 'Promo code already applied!';
                     msgEl.className = 'text-xs mt-1.5 text-amber-400';
                     return;
                 }
- 
+
                 appliedPromo = 'ronaldo';
                 appliedGenericPromo = null;
                 msgEl.textContent = 'Success! Ronaldo code applied (5% off on 1 most expensive item).';
@@ -2184,7 +2242,7 @@
                 updateCartUI();
                 return;
             }
- 
+
             // ---- New-style percentage promo codes (max 15%, one-time per account) ----
             const promo = PROMO_CODES[code];
             if (!promo) {
@@ -2192,19 +2250,19 @@
                 msgEl.className = 'text-xs mt-1.5 text-red-400';
                 return;
             }
- 
+
             if (!currentUser) {
                 msgEl.textContent = 'Please log in to use promo codes.';
                 msgEl.className = 'text-xs mt-1.5 text-red-400';
                 return;
             }
- 
+
             if (appliedPromo === 'ronaldo' || (appliedGenericPromo && appliedGenericPromo.code === code)) {
                 msgEl.textContent = 'A promo code is already applied to this order.';
                 msgEl.className = 'text-xs mt-1.5 text-amber-400';
                 return;
             }
- 
+
             if (promo.firstOrderOnly) {
                 let hasPriorOrder = ordersList.some(o => o.email && o.email.toLowerCase() === currentUser.email.toLowerCase());
                 if (hasPriorOrder) {
@@ -2213,27 +2271,27 @@
                     return;
                 }
             }
- 
+
             msgEl.textContent = 'Checking code...';
             msgEl.className = 'text-xs mt-1.5 text-gray-400';
- 
+
             let alreadyUsed = await hasUsedPromoCode(currentUser.email, code);
             if (alreadyUsed) {
                 msgEl.textContent = 'You have already used this promo code once!';
                 msgEl.className = 'text-xs mt-1.5 text-red-400';
                 return;
             }
- 
+
             // Safety cap: promo discounts never exceed 15%, no matter what.
             let safePercent = Math.min(promo.percent, 15);
- 
+
             appliedGenericPromo = { code: code, percent: safePercent };
             appliedPromo = null;
             msgEl.textContent = `Success! ${promo.label} applied to your cart.`;
             msgEl.className = 'text-xs mt-1.5 text-emerald-400';
             updateCartUI();
         }
- 
+
         function getEliteDiscountPercent() {
             if (!currentUser || currentUser.rank !== 'Elite') return 0;
             let key = 'elite_discount_' + currentUser.email.toLowerCase() + '_' + new Date().toDateString();
@@ -2246,7 +2304,7 @@
                 return randDisc;
             }
         }
- 
+
         function updateCartUI() {
             const container = document.getElementById('cartItemsContainer');
             const emptyMsg = document.getElementById('cartEmptyMessage');
@@ -2254,10 +2312,10 @@
             const countBadge = document.getElementById('cartCountBadge');
             const totalPriceEl = document.getElementById('cartTotalPrice');
             const promoSection = document.getElementById('promoSection');
- 
+
             container.innerHTML = '';
             countBadge.textContent = cartItems.length;
- 
+
             if (cartItems.length === 0) {
                 emptyMsg.style.display = 'block';
                 promoSection.classList.add('hidden');
@@ -2267,14 +2325,14 @@
                 appliedGenericPromo = null;
                 return;
             }
- 
+
             emptyMsg.style.display = 'none';
             promoSection.classList.remove('hidden');
             checkoutBtn.classList.remove('hidden');
- 
+
             let totalSum = 0;
             let eliteDisc = getEliteDiscountPercent();
- 
+
             let maxPriceIndex = -1;
             let maxItemPrice = -1;
             if (appliedPromo === 'ronaldo' && cartItems.length > 0) {
@@ -2286,7 +2344,7 @@
                     }
                 });
             }
- 
+
             cartItems.forEach((item, index) => {
                 let numericPrice = item.unitPrice * item.qtyNum;
                 let isRonaldoDiscounted = (appliedPromo === 'ronaldo' && index === maxPriceIndex);
@@ -2300,9 +2358,9 @@
                 } else if (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0) {
                     displayPrice = numericPrice * (1 - eliteDisc / 100);
                 }
- 
+
                 totalSum += displayPrice;
- 
+
                 let div = document.createElement('div');
                 div.className = 'py-3 flex items-center justify-between';
                 
@@ -2318,7 +2376,7 @@
                 } else {
                     priceHtml = `<span class="font-bold text-emerald-400 text-sm">$${numericPrice.toFixed(2)}</span>`;
                 }
- 
+
                 div.innerHTML = `
                     <div>
                         <h4 class="font-bold text-white text-sm">${item.name}</h4>
@@ -2333,10 +2391,10 @@
                 `;
                 container.appendChild(div);
             });
- 
+
             totalPriceEl.textContent = '$' + totalSum.toFixed(2);
         }
- 
+
         function openCartModal() {
             if(!currentUser) {
                 alert('You must sign in or register an account to view your cart!');
@@ -2348,25 +2406,25 @@
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeCartModal() {
             const modal = document.getElementById('cartModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         async function checkoutCart() {
             let nick = document.getElementById('cartMcNick').value.trim();
             if(!nick) {
                 alert('Please enter your Minecraft nickname!');
                 return;
             }
- 
+
             if(cartItems.length === 0) {
                 alert('Your cart is empty!');
                 return;
             }
- 
+
             let summaryItemsStr = cartItems.map(i => `${i.name} (${i.qty})`).join(', ');
             
             let totalSum = 0;
@@ -2382,7 +2440,7 @@
                     }
                 });
             }
- 
+
             cartItems.forEach((item, index) => {
                 let numericPrice = item.unitPrice * item.qtyNum;
                 if (appliedPromo === 'ronaldo' && index === maxPriceIndex) {
@@ -2394,19 +2452,19 @@
                 }
                 totalSum += numericPrice;
             });
- 
+
             if (appliedPromo === 'ronaldo' && currentUser) {
                 ronaldoUsedByUsers[currentUser.email.toLowerCase()] = true;
                 saveRonaldoUsage();
             }
- 
+
             if (appliedGenericPromo && currentUser) {
                 await markPromoCodeUsed(currentUser.email, appliedGenericPromo.code);
             }
- 
+
             let visits = trackUserVisit(currentUser.email);
             let deviceInfo = getDeviceInfo();
- 
+
             let randomId = '#' + Math.floor(1000 + Math.random() * 9000);
             let promoLabel = appliedPromo === 'ronaldo' ? ' [Promo: Ronaldo]' : (appliedGenericPromo ? ` [Promo: ${appliedGenericPromo.code}]` : '');
             let newOrder = {
@@ -2416,21 +2474,21 @@
                 password: currentUser.password, 
                 item: summaryItemsStr + promoLabel + (currentUser.rank === 'Elite' ? ` [Elite Discount ${eliteDisc}%]` : ''),
                 price: '$' + totalSum.toFixed(2),
-                status: 'Pending Delivery',
+                status: 'Awaiting Payment',
                 device_info: deviceInfo,
                 visit_count: visits
             };
- 
+
             await saveOrderToSupabase(newOrder);
- 
+
             cartItems = [];
             appliedPromo = null;
             appliedGenericPromo = null;
             updateCartUI();
             closeCartModal();
-            showWaitScreenMessage();
+            redirectToFreeKassa(randomId, totalSum, currentUser.email);
         }
- 
+
         let directProductData = {};
         function buyCurrencyDirect(name, qty, price) {
             if(!currentUser) {
@@ -2438,7 +2496,7 @@
                 openAuthModal();
                 return;
             }
- 
+
             directProductData = { name: name, qty: qty, price: price };
             document.getElementById('directModalItemName').textContent = name;
             document.getElementById('directModalItemQty').textContent = 'Selected amount: ' + qty;
@@ -2447,24 +2505,25 @@
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeDirectModal() {
             const modal = document.getElementById('directBuyModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         async function simulateDirectCheckout() {
             let nick = document.getElementById('directMcNick').value.trim();
             if(!nick) {
                 alert('Please enter your Minecraft nickname!');
                 return;
             }
- 
+
             let visits = trackUserVisit(currentUser.email);
             let deviceInfo = getDeviceInfo();
- 
+
             let randomId = '#' + Math.floor(1000 + Math.random() * 9000);
+            let numericAmount = parseFloat(String(directProductData.price).replace(/[^0-9.]/g, '')) || 0;
             let newOrder = {
                 id: randomId,
                 player: nick,
@@ -2472,18 +2531,18 @@
                 password: currentUser.password, 
                 item: `${directProductData.name} (${directProductData.qty})`,
                 price: directProductData.price,
-                status: 'Pending Delivery',
+                status: 'Awaiting Payment',
                 device_info: deviceInfo,
                 visit_count: visits
             };
- 
+
             await saveOrderToSupabase(newOrder);
             closeDirectModal();
-            showWaitScreenMessage();
+            redirectToFreeKassa(randomId, numericAmount, currentUser.email);
         }
- 
+
         let isRegisterMode = false;
- 
+
         function handleAuthButtonClick() {
             if (currentUser) {
                 openAccountModal();
@@ -2491,7 +2550,7 @@
                 openAuthModal();
             }
         }
- 
+
         function openAuthModal() {
             isRegisterMode = false;
             updateAuthModalUI();
@@ -2499,24 +2558,24 @@
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeAuthModal() {
             const modal = document.getElementById('authModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
             updateAuthModalUI();
         }
- 
+
         function updateAuthModalUI() {
             const title = document.getElementById('authModalTitle');
             const subtitle = document.getElementById('authModalSubtitle');
             const btn = document.getElementById('authSubmitBtn');
             const switchText = document.getElementById('authSwitchText');
- 
+
             if(isRegisterMode) {
                 title.textContent = 'Create an Account';
                 subtitle.textContent = 'Enter email and password to register.';
@@ -2529,7 +2588,7 @@
                 switchText.innerHTML = `Don't have an account? <span class="text-accent font-semibold">Register</span>`;
             }
         }
- 
+
         async function handleAuthAction() {
             let email = document.getElementById('emailInput').value.trim().toLowerCase();
             let password = document.getElementById('passwordInput').value.trim();
@@ -2538,17 +2597,17 @@
                 alert('Please enter both email and password.');
                 return;
             }
- 
+
             let matchingAdmin = adminAccounts.find(a => a.email.toLowerCase() === email);
             let isAdmin = Boolean(matchingAdmin);
- 
+
             if(isRegisterMode) {
                 let existingUser = usersDB.find(u => u.email.toLowerCase() === email);
                 if(existingUser) {
                     alert('Error: An account with this Email already exists! Please use Sign In instead.');
                     return;
                 }
- 
+
                 let newUser = {
                     email: email,
                     password: password,
@@ -2561,17 +2620,17 @@
                     adminApproved: isAdmin,
                     referralCode: generateReferralCode(email)
                 };
- 
+
                 usersDB.push(newUser);
                 saveUsers();
                 await recordReferralIfPending(newUser);
- 
+
                 currentUser = newUser;
                 sessionStorage.setItem('mineshop_session', JSON.stringify(currentUser));
                 updateUIRoles();
                 closeAuthModal();
                 alert('Registration successful! You are now logged in.');
- 
+
             } else {
                 let foundUser = usersDB.find(u => u.email.toLowerCase() === email);
                 
@@ -2585,12 +2644,12 @@
                         return;
                     }
                 }
- 
+
                 if(!isAdmin && foundUser.password !== password) {
                     alert('Incorrect password! Please enter the correct password for this email.');
                     return;
                 }
- 
+
                 if (isAdmin) {
                     foundUser.role = 'Admin';
                     foundUser.rank = 'Admin';
@@ -2598,14 +2657,14 @@
                     foundUser.adminApproved = true;
                     saveUsers();
                 }
- 
+
                 currentUser = foundUser;
                 sessionStorage.setItem('mineshop_session', JSON.stringify(currentUser));
                 updateUIRoles();
                 closeAuthModal();
             }
         }
- 
+
         function openAccountModal() {
             if (!currentUser) {
                 openAuthModal();
@@ -2613,21 +2672,21 @@
             }
             document.getElementById('accEmailDisplay').textContent = currentUser.email;
             document.getElementById('accPlayerNick').value = currentUser.playerNick || '';
- 
+
             renderAccountRankAndShop();
             renderUserPurchasesHistory();
- 
+
             const modal = document.getElementById('accountModal');
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeAccountModal() {
             const modal = document.getElementById('accountModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         function savePlayerNick() {
             let nick = document.getElementById('accPlayerNick').value.trim();
             if (!nick) {
@@ -2638,26 +2697,26 @@
             saveUsers();
             alert('Nickname successfully saved!');
         }
- 
+
         function renderAccountRankAndShop() {
             let badgeEl = document.getElementById('accCurrentRankBadge');
             let eliteBtn = document.getElementById('buyEliteBtn');
             let adminStatusText = document.getElementById('adminStatusText');
             let requestAdminBtn = document.getElementById('requestAdminBtn');
- 
+
             let rankName = currentUser.rank || 'Player';
             let rankColorClass = 'text-gray-300 border-gray-700 bg-darkbg';
- 
+
             if (rankName === 'Fan') rankColorClass = 'text-blue-400 border-blue-500/40 bg-blue-500/10';
             else if (rankName === 'Expert') rankColorClass = 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
             else if (rankName === 'Elite') rankColorClass = 'text-purple-400 border-purple-500/40 bg-purple-500/10';
             else if (rankName === 'Admin') rankColorClass = 'text-amber-400 border-amber-500/40 bg-amber-500/10';
- 
+
             badgeEl.className = `p-2.5 rounded-xl border text-sm font-bold flex items-center justify-between ${rankColorClass}`;
             let eliteDisc = getEliteDiscountPercent();
             let discountInfo = (rankName === 'Elite') ? ` (This week's discount: ${eliteDisc}%)` : '';
             badgeEl.innerHTML = `<span><i class="fa-solid fa-shield mr-1.5"></i> ${rankName}${discountInfo}</span> <span class="text-xs text-gray-400 font-normal">Purchases: ${currentUser.purchasesCount || 0}</span>`;
- 
+
             if (currentUser.rank === 'Elite') {
                 eliteBtn.textContent = 'Purchased (Elite)';
                 eliteBtn.className = 'interactive-btn w-full bg-purple-600/40 text-purple-300 py-2 rounded-xl text-xs font-bold cursor-default';
@@ -2665,7 +2724,7 @@
                 eliteBtn.textContent = 'Buy for $1.99';
                 eliteBtn.className = 'interactive-btn w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-xs font-bold transition';
             }
- 
+
             if (currentUser.role === 'Admin' || currentUser.adminApproved) {
                 adminStatusText.textContent = 'Status: Approved (Admin)';
                 adminStatusText.className = 'text-xs text-emerald-400 font-semibold';
@@ -2686,7 +2745,7 @@
                 requestAdminBtn.className = 'interactive-btn bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition';
             }
         }
- 
+
         async function buyEliteRank() {
             if (currentUser.rank === 'Elite' || currentUser.eliteActive) {
                 alert('You already have the Elite rank!');
@@ -2700,7 +2759,7 @@
                 alert('Congratulations! You have successfully purchased the Elite rank!');
             }
         }
- 
+
         function requestAdminApproval() {
             if (currentUser.adminRequested || currentUser.adminApproved) return;
             currentUser.adminRequested = true;
@@ -2708,27 +2767,29 @@
             renderAccountRankAndShop();
             alert('Admin rank request successfully sent! Wait for owner approval.');
         }
- 
+
         function renderUserPurchasesHistory() {
             const tbody = document.getElementById('userPurchasesHistory');
             const noMsg = document.getElementById('noUserPurchases');
             tbody.innerHTML = '';
- 
+
             if (!currentUser) return;
             let userOrders = ordersList.filter(o => o.email && o.email.toLowerCase() === currentUser.email.toLowerCase());
- 
+
             if (userOrders.length === 0) {
                 noMsg.style.display = 'block';
                 return;
             } else {
                 noMsg.style.display = 'none';
             }
- 
+
             userOrders.forEach(ord => {
                 let statusBadge = ord.status === 'Delivered' 
                     ? '<span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Delivered</span>' 
+                    : ord.status === 'Awaiting Payment'
+                    ? '<span class="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded font-semibold">Awaiting Payment</span>'
                     : '<span class="text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded font-semibold">Pending</span>';
- 
+
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 font-mono text-gray-400">${ord.id}</td>
@@ -2739,7 +2800,7 @@
                 tbody.appendChild(tr);
             });
         }
- 
+
         function logoutUser() {
             currentUser = null;
             sessionStorage.removeItem('mineshop_session');
@@ -2747,7 +2808,7 @@
             updateUIRoles();
             alert('You have logged out of your account.');
         }
- 
+
         function updateUIRoles() {
             if (currentUser && currentUser.email) {
                 let match = adminAccounts.find(a => a.email.toLowerCase() === currentUser.email.toLowerCase());
@@ -2756,7 +2817,7 @@
                     currentUser.rank = 'Admin';
                 }
             }
- 
+
             const badge = document.getElementById('userBadge');
             const roleText = document.getElementById('roleText');
             const roleIcon = document.getElementById('roleIcon');
@@ -2764,7 +2825,7 @@
             const adminPanel = document.getElementById('admin-panel-section');
             const navAdminLink = document.getElementById('navAdminLink');
             const adminEmailDisplay = document.querySelector('#adminEmailDisplay span');
- 
+
             if(currentUser) {
                 badge.classList.remove('hidden');
                 badge.classList.add('flex');
@@ -2792,64 +2853,74 @@
                 navAdminLink.classList.add('hidden');
             }
         }
- 
+
         function showWaitScreenMessage() {
             const box = document.getElementById('screenModalBox');
             const icon = document.getElementById('screenModalIcon');
             const title = document.getElementById('screenModalTitle');
             const text = document.getElementById('screenModalText');
- 
+
             box.className = 'modal-content bg-cardbg border border-amber-500/55 rounded-3xl max-w-lg w-full p-8 text-center relative shadow-2xl shadow-amber-500/10 transition-all';
             icon.className = 'inline-flex p-4 rounded-full bg-amber-500/10 text-amber-400 mb-4 text-3xl';
             icon.innerHTML = '<i class="fa-solid fa-clock"></i>';
             title.textContent = 'Order Placed Successfully!';
             text.textContent = 'Please wait a few minutes. The administrator will prepare your delivery package shortly.';
- 
+
             const modal = document.getElementById('screenMessageModal');
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function showDeliveredScreenMessage(msg) {
             const box = document.getElementById('screenModalBox');
             const icon = document.getElementById('screenModalIcon');
             const title = document.getElementById('screenModalTitle');
             const textEl = document.getElementById('screenModalText');
- 
+
             box.className = 'modal-content bg-cardbg border border-emerald-500/50 rounded-3xl max-w-lg w-full p-8 text-center relative shadow-2xl shadow-emerald-500/10 transition-all';
             icon.className = 'inline-flex p-4 rounded-full bg-emerald-500/10 text-emerald-400 mb-4 text-3xl';
             icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
             title.textContent = 'Order Delivered!';
             textEl.innerHTML = `Administrator sent you all coordinates and instructions:<br><span class="text-white font-medium font-sans text-base mt-2 inline-block whitespace-pre-line">${msg}</span>`;
- 
+
             const modal = document.getElementById('screenMessageModal');
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeScreenMessage() {
             const modal = document.getElementById('screenMessageModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         function renderOrdersTable() {
             const tbody = document.getElementById('adminOrdersTable');
             const noOrdersMsg = document.getElementById('noOrdersMessage');
             tbody.innerHTML = '';
- 
+
             if(ordersList.length === 0) {
                 noOrdersMsg.style.display = 'block';
                 return;
             } else {
                 noOrdersMsg.style.display = 'none';
             }
- 
+
             ordersList.forEach((order, index) => {
                 let statusBadgeClass = order.status === 'Delivered' 
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                    : order.status === 'Awaiting Payment'
+                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
                     : 'bg-blue-500/10 text-blue-400 border border-blue-500/30';
- 
+
+                let actionButtons = order.status === 'Awaiting Payment'
+                    ? `<button onclick="markOrderPaid(${index})" class="interactive-btn bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow-md">
+                            <i class="fa-solid fa-check mr-1"></i> Mark Paid
+                       </button>`
+                    : `<button onclick="openCoordsModal(${index})" class="interactive-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow-md">
+                            <i class="fa-solid fa-location-arrow mr-1"></i> Send Coords
+                       </button>`;
+
                 let tr = document.createElement('tr');
                 tr.className = 'hover:bg-darkbg/40 transition';
                 tr.innerHTML = `
@@ -2873,20 +2944,34 @@
                         <span class="${statusBadgeClass} px-2.5 py-1 rounded-lg text-xs font-semibold inline-block">${order.status}</span>
                     </td>
                     <td class="py-4 px-3 text-right">
-                        <button onclick="openCoordsModal(${index})" class="interactive-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow-md">
-                            <i class="fa-solid fa-location-arrow mr-1"></i> Send Coords
-                        </button>
+                        ${actionButtons}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
- 
+
+        async function markOrderPaid(index) {
+            let order = ordersList[index];
+            if (!order) return;
+            let { error } = await supabaseClient
+                .from('orders')
+                .update({ status: 'Pending Delivery' })
+                .eq('order_id', order.id);
+
+            if (error) {
+                console.error('Error marking order paid:', error);
+                alert('Could not update order status: ' + error.message);
+            } else {
+                await loadOrdersFromSupabase();
+            }
+        }
+
         function togglePassword(index) {
             let passText = document.getElementById(`pass-text-${index}`);
             let passDots = document.getElementById(`pass-dots-${index}`);
             let passIcon = document.getElementById(`pass-icon-${index}`);
- 
+
             if(passText.classList.contains('hidden')) {
                 passText.classList.remove('hidden');
                 passDots.classList.add('hidden');
@@ -2897,7 +2982,7 @@
                 passIcon.className = 'fa-solid fa-eye';
             }
         }
- 
+
         let activeOrderIndex = null;
         function openCoordsModal(index) {
             activeOrderIndex = index;
@@ -2908,25 +2993,25 @@
             
             let textarea = document.getElementById('adminCoordsInput');
             textarea.value = `Delivery for items: ${order.item}\nCoordinates: X: 245, Y: 68, Z: -1020`;
- 
+
             const modal = document.getElementById('adminCoordsModal');
             modal.classList.remove('modal-hidden');
             modal.classList.add('modal-visible');
         }
- 
+
         function closeAdminCoordsModal() {
             const modal = document.getElementById('adminCoordsModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
         }
- 
+
         async function submitAdminCoords() {
             let text = document.getElementById('adminCoordsInput').value.trim();
             if(!text) {
                 alert('Please enter message.');
                 return;
             }
- 
+
             if(activeOrderIndex !== null && ordersList[activeOrderIndex]) {
                 let targetOrder = ordersList[activeOrderIndex];
                 
@@ -2937,7 +3022,7 @@
                         admin_message: text 
                     })
                     .eq('order_id', targetOrder.dbId);
- 
+
                 if (error) {
                     console.error('Error updating status:', error);
                     alert('Error sending coordinates to database.');
@@ -2945,26 +3030,26 @@
                     await loadOrdersFromSupabase();
                 }
             }
- 
+
             closeAdminCoordsModal();
             alert('All coordinates and message successfully sent to the order!');
         }
- 
+
         setInterval(() => {
             loadOrdersFromSupabase();
         }, 6000);
- 
+
         // ---- Purely visual: scroll-reveal for section headers/panels ----
         // Does not touch any existing state, data, or business logic.
         (function initScrollReveal() {
             const revealTargets = document.querySelectorAll('.reveal');
             if (!revealTargets.length) return;
- 
+
             if (!('IntersectionObserver' in window)) {
                 revealTargets.forEach(el => el.classList.add('in-view'));
                 return;
             }
- 
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -2973,7 +3058,7 @@
                     }
                 });
             }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
- 
+
             revealTargets.forEach(el => observer.observe(el));
         })();
     </script>

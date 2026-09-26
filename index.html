@@ -49,7 +49,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
     <style>
         :root {
             --accent-rgb: 139, 92, 246;
@@ -1868,56 +1867,29 @@
         const SITE_DOMAIN = 'https://www.mineshop.lol/';
 
         // ===================================================================
-        // FREEKASSA PAYMENT INTEGRATION (SCI / simple form method)
+        // PAYPAL PAYMENT INTEGRATION (Payment Link — customer enters amount)
         // ===================================================================
-        // Fill these in from https://merchant.freekassa.net/settings after you
-        // create your "kassa" (shop). Do NOT put Secret Word 2 here — that one
-        // stays private on the notification/webhook side only.
-        const FREEKASSA_MERCHANT_ID = '76096';   // e.g. '177'
-        const FREEKASSA_SECRET_WORD_1 = 'RDkz/jXs}9y.7B_'; // "Секретное слово" (not "Секретное слово 2")
-        const FREEKASSA_CURRENCY = 'USD'; // must match a currency enabled on your kassa: RUB, USD, EUR, UAH, KZT
+        const PAYPAL_PAYMENT_LINK = 'https://www.paypal.com/ncp/payment/DPWRJBWNZ2TNY';
+        const PAYPAL_CURRENCY = 'USD';
 
-        function buildFreeKassaSignature(amount, orderId) {
-            // MD5("merchant_id:amount:secret_word:currency:order_id") per FreeKassa SCI docs
-            const raw = `${FREEKASSA_MERCHANT_ID}:${amount}:${FREEKASSA_SECRET_WORD_1}:${FREEKASSA_CURRENCY}:${orderId}`;
-            return md5(raw);
-        }
-
-        function redirectToFreeKassa(orderId, amount, email) {
-            if (FREEKASSA_MERCHANT_ID === 'YOUR_MERCHANT_ID' || FREEKASSA_SECRET_WORD_1 === 'YOUR_SECRET_WORD_1') {
-                alert('FreeKassa is not configured yet. The site owner needs to add their Merchant ID and Secret Word 1 in the code.');
-                return;
-            }
-
+        function redirectToPayPal(orderId, amount) {
             const amountStr = Number(amount).toFixed(2);
-            const paymentOrderId = orderId.replace('#', '');
-            const sign = buildFreeKassaSignature(amountStr, paymentOrderId);
+            // The PayPal link uses a customer-entered amount, so we ask the buyer
+            // to type the exact total and note their order ID for matching.
+            alert('You will now be taken to PayPal to complete your payment.\n\nPlease enter the exact amount: ' + amountStr + ' ' + PAYPAL_CURRENCY + '\nAnd write your order ID in the note: ' + orderId + '\n\nThis helps us match your payment to your order.');
 
-            const params = new URLSearchParams({
-                m: FREEKASSA_MERCHANT_ID,
-                oa: amountStr,
-                currency: FREEKASSA_CURRENCY,
-                o: paymentOrderId,
-                s: sign,
-                em: email || '',
-                lang: 'en'
-            });
-
-            window.location.href = `https://pay.fk.money/?${params.toString()}`;
+            window.location.href = PAYPAL_PAYMENT_LINK;
         }
 
-        // ---- Handle the return from FreeKassa (success_url / failure_url) ----
+        // ---- Handle the return from PayPal's Confirmation URL ----
         (function handlePaymentReturn() {
             const params = new URLSearchParams(window.location.search);
             const paymentStatus = params.get('payment');
-            const orderRef = params.get('order');
             if (!paymentStatus) return;
 
             window.addEventListener('DOMContentLoaded', () => {
                 if (paymentStatus === 'success') {
-                    alert('Payment received!' + (orderRef ? ' Order ' + orderRef + ' is' : ' Your order is') + ' now awaiting delivery. You can track it from your Personal Account.');
-                } else if (paymentStatus === 'fail') {
-                    alert('Payment was not completed' + (orderRef ? ' for order ' + orderRef : '') + '. You can try again from your cart or account page.');
+                    alert('Thank you! Once we confirm your payment, your order will move to delivery. You can track its status from your Personal Account.');
                 }
                 const cleanUrl = window.location.origin + window.location.pathname;
                 window.history.replaceState({}, document.title, cleanUrl);
@@ -2486,7 +2458,7 @@
             appliedGenericPromo = null;
             updateCartUI();
             closeCartModal();
-            redirectToFreeKassa(randomId, totalSum, currentUser.email);
+            redirectToPayPal(randomId, totalSum);
         }
 
         let directProductData = {};
@@ -2538,7 +2510,7 @@
 
             await saveOrderToSupabase(newOrder);
             closeDirectModal();
-            redirectToFreeKassa(randomId, numericAmount, currentUser.email);
+            redirectToPayPal(randomId, numericAmount);
         }
 
         let isRegisterMode = false;

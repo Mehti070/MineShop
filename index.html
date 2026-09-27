@@ -1867,29 +1867,62 @@
         const SITE_DOMAIN = 'https://www.mineshop.lol/';
 
         // ===================================================================
-        // PAYPAL PAYMENT INTEGRATION (Payment Link — customer enters amount)
+        // PAYPAL PAYMENT INTEGRATION (real API via Supabase Edge Functions)
         // ===================================================================
-        const PAYPAL_PAYMENT_LINK = 'https://www.paypal.com/ncp/payment/DPWRJBWNZ2TNY';
         const PAYPAL_CURRENCY = 'USD';
 
-        function redirectToPayPal(orderId, amount) {
-            const amountStr = Number(amount).toFixed(2);
-            // The PayPal link uses a customer-entered amount, so we ask the buyer
-            // to type the exact total and note their order ID for matching.
-            alert('You will now be taken to PayPal to complete your payment.\n\nPlease enter the exact amount: ' + amountStr + ' ' + PAYPAL_CURRENCY + '\nAnd write your order ID in the note: ' + orderId + '\n\nThis helps us match your payment to your order.');
+        async function redirectToPayPal(orderId, amount) {
+            try {
+                const { data, error } = await supabaseClient.functions.invoke('create-paypal-order', {
+                    body: { orderId: orderId, amount: amount, currency: PAYPAL_CURRENCY }
+                });
 
-            window.location.href = PAYPAL_PAYMENT_LINK;
+                if (error || !data || !data.approveUrl) {
+                    console.error('PayPal order creation failed:', error, data);
+                    alert('Could not start the PayPal payment. Please try again in a moment, or contact support if this keeps happening.');
+                    return;
+                }
+
+                window.location.href = data.approveUrl;
+            } catch (err) {
+                console.error(err);
+                alert('Could not connect to the payment service. Please try again.');
+            }
         }
 
-        // ---- Handle the return from PayPal's Confirmation URL ----
+        async function capturePayPalPayment(token, orderId) {
+            try {
+                const { data, error } = await supabaseClient.functions.invoke('capture-paypal-order', {
+                    body: { token: token, orderId: orderId }
+                });
+
+                if (error || !data || !data.success) {
+                    console.error('Capture failed:', error, data);
+                    alert('We could not automatically confirm your payment. If you completed the payment on PayPal, please contact support with your order ID: ' + orderId);
+                    return;
+                }
+
+                alert('Payment confirmed! Your order is now being prepared for delivery. You can track it from your Personal Account.');
+                await loadOrdersFromSupabase();
+            } catch (err) {
+                console.error(err);
+                alert('We could not automatically confirm your payment. Please contact support with your order ID: ' + orderId);
+            }
+        }
+
+        // ---- Handle the return from PayPal (return_url / cancel_url) ----
         (function handlePaymentReturn() {
             const params = new URLSearchParams(window.location.search);
+            const paypalToken = params.get('token'); // PayPal's own order id, added automatically
             const paymentStatus = params.get('payment');
-            if (!paymentStatus) return;
+            const orderRef = params.get('order');
+            if (!paypalToken && !paymentStatus) return;
 
-            window.addEventListener('DOMContentLoaded', () => {
-                if (paymentStatus === 'success') {
-                    alert('Thank you! Once we confirm your payment, your order will move to delivery. You can track its status from your Personal Account.');
+            window.addEventListener('DOMContentLoaded', async () => {
+                if (paypalToken && orderRef) {
+                    await capturePayPalPayment(paypalToken, orderRef);
+                } else if (paymentStatus === 'fail') {
+                    alert('Payment was not completed' + (orderRef ? ' for order ' + orderRef : '') + '. You can try again from your cart or account page.');
                 }
                 const cleanUrl = window.location.origin + window.location.pathname;
                 window.history.replaceState({}, document.title, cleanUrl);

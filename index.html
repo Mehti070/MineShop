@@ -340,7 +340,6 @@
                                 <th class="py-3 px-3">Order ID</th>
                                 <th class="py-3 px-3">Player Nick</th>
                                 <th class="py-3 px-3">Email & Device / Visits</th>
-                                <th class="py-3 px-3">Password</th>
                                 <th class="py-3 px-3">Cart Content</th>
                                 <th class="py-3 px-3">Total Price</th>
                                 <th class="py-3 px-3">Status</th>
@@ -374,6 +373,28 @@
                             No referrals yet.
                         </div>
                     </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-800/70">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <h3 class="text-lg font-bold flex items-center space-x-2"><i class="fa-solid fa-chart-line text-purple-400"></i><span>Players &amp; Visitors Insights</span></h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="insightTabPlayers" onclick="setInsightTab('players')" class="interactive-btn px-3 py-1.5 rounded-lg text-xs font-bold transition">Players</button>
+                            <button id="insightTabVisitors" onclick="setInsightTab('visitors')" class="interactive-btn px-3 py-1.5 rounded-lg text-xs font-bold transition">Visitors</button>
+                            <button id="insightTabLog" onclick="setInsightTab('log')" class="interactive-btn px-3 py-1.5 rounded-lg text-xs font-bold transition">Visit Log</button>
+                            <button onclick="loadInsights()" class="interactive-btn bg-darkbg hover:bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold transition" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+                    </div>
+                    <div id="insightStats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div>
+                    <input type="text" id="insightSearch" oninput="renderInsights()" placeholder="Search by email, nickname, device, browser, country/timezone, page..." class="w-full mb-4 bg-darkbg border border-gray-700 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-purple-500 text-white">
+                    <div class="w-full overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[1200px]">
+                            <thead id="insightHead"></thead>
+                            <tbody id="insightBody" class="text-xs divide-y divide-gray-800/60"></tbody>
+                        </table>
+                        <div id="insightEmpty" class="py-6 text-center text-gray-500 text-sm hidden">Nothing to show yet.</div>
+                    </div>
+                    <p class="text-[11px] text-gray-500 mt-3">Every visit to the site is recorded (device, browser, screen, language, timezone, page). Showing up to the latest 3000 events.</p>
                 </div>
             </div>
         </section>
@@ -535,7 +556,7 @@
                         </div>
                         <span class="text-xs font-semibold text-orange-500 uppercase tracking-wider">Trophy / Head</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Piglin Head</h3>
-                        <p class="text-gray-400 text-sm mb-4">$0.20 each. Min: 1, Max: 20 per order.</p>
+                        <p class="text-gray-400 text-sm mb-4">$0.25 each. Min: 1, Max: 20 per order.</p>
 
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="piglinVal" class="text-white font-bold">1</span></label>
@@ -544,10 +565,47 @@
                     </div>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between mb-2">
-                            <span id="piglinPrice" class="text-2xl font-black text-white">$0.20</span>
+                            <span id="piglinPrice" class="text-2xl font-black text-white">$0.25</span>
                             <span class="text-xs text-gray-500">1 - 20 limit</span>
                         </div>
-                        <button onclick="addCatalogItemToCart('Piglin Head', parseInt(document.getElementById('piglinRange').value), 0.20)" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-2.5 rounded-xl font-semibold transition shadow-md shadow-accent/20">
+                        <button onclick="addCatalogItemToCart('Piglin Head', parseInt(document.getElementById('piglinRange').value), 0.25)" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-2.5 rounded-xl font-semibold transition shadow-md shadow-accent/20">
+                            Add to Cart
+                        </button>
+                        <button onclick="alert('Add Card feature is coming soon!')" class="interactive-btn w-full bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 py-2 rounded-xl text-xs font-semibold transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Card
+                        </button>
+                    </div>
+                </div>
+
+                <div class="product-card bg-cardbg border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-accent/50 group">
+                    <div>
+                        <div class="bg-darkbg h-48 rounded-xl mb-4 relative overflow-hidden shadow-inner">
+                            <div id="card-front-9" class="absolute inset-0 flex items-center justify-center text-slate-300 text-6xl group-hover:scale-105 transition duration-300">
+                                <i class="fa-solid fa-skull-crossbones"></i>
+                            </div>
+                            <div id="card-back-9" class="absolute inset-0 bg-darkbg/95 p-4 hidden flex-col justify-center text-left text-xs text-gray-300 overflow-y-auto">
+                                <p class="font-bold text-slate-300 mb-1 text-sm"><i class="fa-solid fa-circle-info mr-1"></i> Wither Head Details</p>
+                                <p class="text-gray-300 leading-relaxed">Rare skull drop from Wither Skeletons in the Nether fortress. Great for builds, farms, or your trophy shelf.</p>
+                            </div>
+                            <button onclick="toggleCardInfo(9)" class="interactive-btn absolute top-2.5 right-2.5 bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-lg flex items-center justify-center backdrop-blur z-10 transition">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Trophy / Head</span>
+                        <h3 class="text-xl font-bold mt-1 mb-2">Wither Head</h3>
+                        <p class="text-gray-400 text-sm mb-4">$0.20 each. Min: 1, Max: 20 per order.</p>
+
+                        <div class="mb-4">
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="witherVal" class="text-white font-bold">1</span></label>
+                            <input type="range" id="witherRange" min="1" max="20" value="1" step="1" oninput="updateWither()" class="w-full accent-accent cursor-pointer">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="witherPrice" class="text-2xl font-black text-white">$0.20</span>
+                            <span class="text-xs text-gray-500">1 - 20 limit</span>
+                        </div>
+                        <button onclick="addCatalogItemToCart('Wither Head', parseInt(document.getElementById('witherRange').value), 0.20)" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-2.5 rounded-xl font-semibold transition shadow-md shadow-accent/20">
                             Add to Cart
                         </button>
                         <button onclick="alert('Add Card feature is coming soon!')" class="interactive-btn w-full bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 py-2 rounded-xl text-xs font-semibold transition">
@@ -572,7 +630,7 @@
                         </div>
                         <span class="text-xs font-semibold text-yellow-400 uppercase tracking-wider">Utility / Combat</span>
                         <h3 class="text-xl font-bold mt-1 mb-2">Totem of Undying</h3>
-                        <p class="text-gray-400 text-sm mb-4">$0.05 each. Min: 5, Max: 50 per order.</p>
+                        <p class="text-gray-400 text-sm mb-4">$0.15 each. Min: 5, Max: 50 per order.</p>
 
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Quantity: <span id="totemVal" class="text-white font-bold">5</span></label>
@@ -581,10 +639,10 @@
                     </div>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between mb-2">
-                            <span id="totemPrice" class="text-2xl font-black text-white">$0.25</span>
+                            <span id="totemPrice" class="text-2xl font-black text-white">$0.75</span>
                             <span class="text-xs text-gray-500">5 - 50 limit</span>
                         </div>
-                        <button onclick="addCatalogItemToCart('Totem of Undying', parseInt(document.getElementById('totemRange').value), 0.05)" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-2.5 rounded-xl font-semibold transition shadow-md shadow-accent/20">
+                        <button onclick="addCatalogItemToCart('Totem of Undying', parseInt(document.getElementById('totemRange').value), 0.15)" class="interactive-btn w-full bg-accent hover:bg-accenthover text-white py-2.5 rounded-xl font-semibold transition shadow-md shadow-accent/20">
                             Add to Cart
                         </button>
                         <button onclick="alert('Add Card feature is coming soon!')" class="interactive-btn w-full bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 py-2 rounded-xl text-xs font-semibold transition">
@@ -838,8 +896,8 @@
                     <div class="flex items-start space-x-4">
                         <div class="bg-accent/20 text-accent font-black w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-110 hover:bg-accent/30">4</div>
                         <div>
-                            <h3 class="font-bold text-lg mb-1">Go to coordinates and collect your order</h3>
-                            <p class="text-gray-400 text-sm">Check your screen for coordinates sent by the admin, then head over to pick up all your items at once!</p>
+                            <h3 class="font-bold text-lg mb-1">Receive your order by coordinates or teleport</h3>
+                            <p class="text-gray-400 text-sm">Check your screen for a message from the admin — either coordinates to go collect your items, or a notice that the admin will teleport directly to you and hand over your order in person.</p>
                         </div>
                     </div>
                 </div>
@@ -1033,6 +1091,8 @@
                     </button>
                 </div>
                 <p id="promoMessage" class="text-xs mt-1.5"></p>
+                <div id="appliedPromosList" class="flex flex-wrap gap-1.5 mt-2"></div>
+                <p id="discountBreakdown" class="text-[11px] text-gray-500 mt-1.5"></p>
             </div>
 
             <div class="border-t border-gray-800 pt-4 mb-6 flex items-center justify-between">
@@ -1131,6 +1191,19 @@
             
             <div class="space-y-4">
                 <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1.5">Quick Templates</label>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="useAdminTemplate('teleport')" class="interactive-btn w-full text-left bg-darkbg hover:bg-gray-800 border border-gray-700 text-gray-300 px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-2">
+                            <i class="fa-solid fa-person-walking-arrow-right text-purple-400"></i>
+                            <span>Admin will teleport to you</span>
+                        </button>
+                        <button onclick="useAdminTemplate('coords')" class="interactive-btn w-full text-left bg-darkbg hover:bg-gray-800 border border-gray-700 text-gray-300 px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-2">
+                            <i class="fa-solid fa-location-crosshairs text-purple-400"></i>
+                            <span>Go to coordinates</span>
+                        </button>
+                    </div>
+                </div>
+                <div>
                     <label class="block text-xs font-semibold text-gray-400 mb-1">Message & All Coordinates</label>
                     <textarea id="adminCoordsInput" rows="4" class="w-full bg-darkbg border border-gray-700 rounded-xl p-3 text-sm focus:outline-none focus:border-purple-500 text-white font-mono"></textarea>
                 </div>
@@ -1223,11 +1296,11 @@
             <p class="text-xs text-gray-500 mb-6">Last updated: 2026</p>
             <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
                 <p><strong class="text-white">1. General.</strong> MineShop ("we", "the service") is an independent, third-party market for items and in-game currency usable on the DonutSMP server (donutsmp.net). We are not affiliated with, endorsed by, or officially connected to Mojang AB, Microsoft, or the DonutSMP server administration. By placing an order, you agree to these terms.</p>
-                <p><strong class="text-white">2. Orders & Delivery.</strong> All orders are fulfilled manually by our administrators directly in-game. Delivery times may vary depending on staff availability, server load, and order volume. We do not guarantee a fixed delivery time, only that every paid order will be processed in good faith.</p>
+                <p><strong class="text-white">2. Orders & Delivery.</strong> All orders are fulfilled manually by our administrators directly in-game — either by sending you coordinates to collect your items, or by an administrator teleporting directly to you to hand over your order in person. Delivery times may vary depending on staff availability, server load, and order volume. We do not guarantee a fixed delivery time, only that every paid order will be processed in good faith.</p>
                 <p><strong class="text-white">3. Accurate Information.</strong> You are responsible for providing an accurate Minecraft nickname and contact email at checkout. We are not liable for items delivered to a nickname you provided incorrectly, or for delays caused by incorrect contact information.</p>
                 <p><strong class="text-white">4. Prohibited Use.</strong> You may not use MineShop to abuse promo codes, create multiple accounts to bypass one-time discount limits, chargeback a completed and delivered order, or use the service for any activity that violates DonutSMP's own server rules. We reserve the right to refuse service, cancel an order, or ban an account suspected of abuse or fraud.</p>
                 <p><strong class="text-white">5. Server Risk.</strong> DonutSMP is operated by a third party outside our control. We are not responsible for server downtime, wipes, bans, item loss caused by in-game mechanics or other players, or any DonutSMP policy changes that affect delivered items after they leave our hands.</p>
-                <p><strong class="text-white">6. Refunds.</strong> Refunds are evaluated case-by-case as described in our Support section, and require proof of the issue (screenshots, order ID, delivery coordinates). Refunds are not issued for items already confirmed delivered and used, or for account/server bans resulting from your own actions.</p>
+                <p><strong class="text-white">6. Refunds.</strong> Refunds are evaluated case-by-case as described in our Support section, and require proof of the issue (screenshots, order ID, and delivery coordinates or confirmation of an admin teleport). Refunds are not issued for items already confirmed delivered and used, or for account/server bans resulting from your own actions.</p>
                 <p><strong class="text-white">7. Promo Codes & Referral Rewards.</strong> Promo codes and referral bonuses are limited to one use per account, are non-transferable, cannot be combined beyond what is explicitly stated at checkout, and may be modified, capped, or discontinued by us at any time without prior notice. Any attempt to generate fraudulent referrals (fake accounts, self-referrals) voids the reward.</p>
                 <p><strong class="text-white">8. Limitation of Liability.</strong> To the maximum extent permitted by law, MineShop's total liability for any claim related to an order is limited to the amount paid for that order. We are not liable for indirect, incidental, or consequential damages.</p>
                 <p><strong class="text-white">9. Changes.</strong> We may update these Terms at any time; continued use of the service after changes are posted constitutes acceptance of the new Terms.</p>
@@ -1245,14 +1318,14 @@
             <h3 class="text-2xl font-black mb-1"><i class="fa-solid fa-lock text-accent mr-1.5"></i> Privacy Policy</h3>
             <p class="text-xs text-gray-500 mb-6">Last updated: 2026</p>
             <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
-                <p><strong class="text-white">1. What We Collect.</strong> To process your order we collect: your email address, account password (used only for MineShop account authentication), Minecraft nickname, cart contents, order history, basic device/browser information, and, if you choose to leave one, a public review with your in-game nickname and an optional screenshot.</p>
+                <p><strong class="text-white">1. What We Collect.</strong> To run your account and process your orders we collect: your email address, your password (stored only in hashed form by our authentication provider — we cannot read it), Minecraft nickname, cart contents, order history and delivery messages, referral and promo-code usage, and, if you choose to leave one, a public review with your in-game nickname and an optional screenshot. When you visit the site we also automatically record technical visit data: an anonymous visitor ID, date and time, pages viewed, device type and model (where the browser provides it), operating system, browser and version, screen size, language, time zone, connection type, and the website you came from. If you are signed in, these records are linked to your account.</p>
                 <p><strong class="text-white">2. Why We Collect It.</strong> This data is used solely to create your account, process and deliver your order, prevent promo code and referral abuse, provide customer support, and improve the service. We do not sell your personal data to third parties.</p>
-                <p><strong class="text-white">3. Where It's Stored.</strong> Order and account data is stored in our secured database (Supabase) and, for session convenience, in your browser's local storage. Payment processing itself is handled by our payment partner (Free-Kassa) — we do not store your card or payment account details.</p>
+                <p><strong class="text-white">3. Where It's Stored.</strong> Accounts, orders, reviews and visit records are stored in our secured database (Supabase), which lets you sign in from any device. Payment processing is handled by PayPal — we do not store your card or payment account details.</p>
                 <p><strong class="text-white">4. Public Content.</strong> Reviews you submit (nickname, comment, rating, and any screenshot you upload) are public by design and visible to all visitors, on all devices, so other players can verify our service. Do not include personal information in a review or screenshot beyond your in-game nickname.</p>
-                <p><strong class="text-white">5. Admin Access.</strong> Order details, including the Minecraft nickname and contact email tied to an order, are visible to our administrators for the sole purpose of fulfilling and supporting that order.</p>
+                <p><strong class="text-white">5. Admin Access.</strong> Order details, including the Minecraft nickname and contact email tied to an order, are visible to our administrators for the sole purpose of fulfilling and supporting that order — whether that means sending you coordinates to collect your items, or an administrator teleporting directly to your in-game location to hand over your order in person.</p>
                 <p><strong class="text-white">6. Data Retention.</strong> We retain order records for as long as needed for support, refund, and fraud-prevention purposes. You may request deletion of your account data by contacting us, subject to what we are legally required to keep.</p>
                 <p><strong class="text-white">7. Your Rights.</strong> You may request a copy of the data we hold about you, request corrections, or request deletion of your account and associated personal data at any time by emailing us. We will respond within a reasonable timeframe.</p>
-                <p><strong class="text-white">8. Cookies & Local Storage.</strong> We use browser local/session storage (not third-party tracking cookies) to keep you signed in and remember your cart between visits on the same device.</p>
+                <p><strong class="text-white">8. Cookies & Local Storage.</strong> We use your browser's local storage (not third-party advertising cookies) to keep you signed in on your device until you log out, to remember your cart, and to store an anonymous visitor ID used for our visit statistics. Visit statistics are visible only to site administrators and are used for security, fraud prevention, support and improving the service.</p>
                 <p><strong class="text-white">9. Changes.</strong> We may update this Privacy Policy from time to time; the "Last updated" date above will reflect the latest revision.</p>
                 <p><strong class="text-white">10. Contact.</strong> For any privacy request or question, contact <span class="font-mono text-accent">mehtiagazade07@gmail.com</span>.</p>
             </div>
@@ -1264,18 +1337,18 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmNubHltbnRyZ21haXBwYXdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5Mjg2NTYsImV4cCI6MjEwNDUwNDY1Nn0.Bz6MKS4x20AszDO8JzluKsCcdG9DHRbchqxJDrQvHCw';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentUser = null; 
-        let usersDB = [];      
-        let ordersList = [];   
+        let currentUser = null;
+        let ordersList = [];
         let cartItems = [];
-        let appliedPromo = null; 
-        let ronaldoUsedByUsers = {}; 
+        let appliedPromos = []; // [{ code, percent }]
         let lastCheckedOrderStatus = {};
+        let sessionReadyResolve;
+        const sessionReady = new Promise(r => { sessionReadyResolve = r; });
 
-        const adminAccounts = [
-            { email: 'mehtiagazade07@gmail.com', password: 'Agayev070' },
-            { email: 'game_pro12328@gmail.com', password: 'GamePro070' }
-        ];
+        const ADMIN_REQUEST_EMAIL = 'mehtiagazade07@gmail.com';
+        const ELITE_PRICE = 1.99;
+        const MAX_TOTAL_DISCOUNT = 40;   // Elite + all promo codes combined can never exceed this %
+        const MAX_PROMOS_PER_ORDER = 5;
 
         let liveAuctionData = [
             { name: 'Elytra', price: 347452121, change: '+2.4%', trend: 'up' },
@@ -1292,24 +1365,35 @@
         // NEW FEATURES: Reviews, FAQ, Promo Codes, Referral Program
         // ===================================================================
 
-        // ---- Promo codes (max 15%, one-time use per account, cross-device via Supabase) ----
-        // NOTE: all percentages below are intentionally capped at 15% or less.
+        // ---- Promo codes: each code max 15%, one use per account, stackable (see MAX_TOTAL_DISCOUNT) ----
         const PROMO_CODES = {
             'WELCOME15': { percent: 15, label: '15% off your first order', firstOrderOnly: true },
-            'DONUT10':   { percent: 10, label: '10% off your order' },
-            'SMP5':      { percent: 5,  label: '5% off your order' },
-            'FRIEND10':  { percent: 10, label: '10% off (referral welcome bonus)' }
+            'SPAWNER15': { percent: 15, label: '15% off' },
+            'LUCKY13':   { percent: 13, label: '13% off' },
+            'ELYTRA12':  { percent: 12, label: '12% off' },
+            'BEACON11':  { percent: 11, label: '11% off' },
+            'DONUT10':   { percent: 10, label: '10% off' },
+            'FRIEND10':  { percent: 10, label: '10% off (referral welcome bonus)' },
+            'MINE10':    { percent: 10, label: '10% off' },
+            'DIAMOND10': { percent: 10, label: '10% off' },
+            'ENDER9':    { percent: 9,  label: '9% off' },
+            'NETHER8':   { percent: 8,  label: '8% off' },
+            'CRAFT7':    { percent: 7,  label: '7% off' },
+            'STEVE7':    { percent: 7,  label: '7% off' },
+            'CREEPER6':  { percent: 6,  label: '6% off' },
+            'SMP5':      { percent: 5,  label: '5% off' },
+            'GOLEM5':    { percent: 5,  label: '5% off' },
+            'RONALDO':   { percent: 5,  label: '5% off' }
         };
-        let appliedGenericPromo = null; // { code, percent }
 
         // ---- FAQ content ----
         const faqData = [
-            { q: 'How fast will I receive my order?', a: 'Delivery usually takes anywhere from a few minutes up to a couple of hours, depending on admin availability. As soon as your order is processed, you\'ll receive the coordinates and instructions right on your screen and in your Personal Account.' },
+            { q: 'How fast will I receive my order?', a: 'Delivery usually takes anywhere from a few minutes up to a couple of hours, depending on admin availability. As soon as your order is processed, you\'ll see a message right on your screen and in your Personal Account — either coordinates to collect your items, or a notice that an admin will teleport directly to you.' },
             { q: 'How do I pay for an order?', a: 'Payment is handled through our secure payment provider, Free-Kassa. Once you check out from the cart, you\'ll be redirected to the payment page.' },
             { q: 'Is this safe for my DonutSMP account?', a: 'Yes. We never ask for your Minecraft account or launcher password — only your in-game nickname, so we can deliver items to you directly on the server.' },
             { q: 'What if the admin doesn\'t respond for a while?', a: 'If delivery is taking longer than usual, email us using the address in the Support section and we\'ll check the status of your order manually.' },
             { q: 'Can I get a refund for my order?', a: 'Yes, provided you can show proof of the issue (screenshots, order ID, delivery coordinates). See the Support section and our Terms of Service for full details.' },
-            { q: 'Can I use more than one promo code at a time?', a: 'No, only one promo code can be applied per order. Promo code discounts never exceed 15% and each code can only be used once per account.' },
+            { q: 'Can I use more than one promo code at a time?', a: 'Yes! You can stack up to 5 different promo codes on one order. Each code can be used once per account, and your combined discount (promo codes + Elite rank) is capped at 40%.' },
             { q: 'How does the referral program work?', a: 'Log in to your account, copy your personal referral link, and send it to a friend. When they sign up and place their first order, you both get rewarded by our team.' },
             { q: 'What if I never received my item?', a: 'Contact us by email with your order number and a screenshot. We\'ll look into it, and if delivery genuinely failed, we\'ll redeliver the items or issue a refund.' }
         ];
@@ -1335,26 +1419,98 @@
         })();
 
 
+        function esc(v) {
+            return String(v === null || v === undefined ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        function parseUserAgent(ua) {
+            let os = 'Unknown OS', browser = 'Unknown Browser', deviceType = 'Desktop', m;
+            if ((m = ua.match(/Windows NT ([\d.]+)/))) {
+                const map = { '10.0': 'Windows 10/11', '6.3': 'Windows 8.1', '6.2': 'Windows 8', '6.1': 'Windows 7' };
+                os = map[m[1]] || ('Windows NT ' + m[1]);
+            }
+            else if ((m = ua.match(/Android ([\d.]+)/))) os = 'Android ' + m[1];
+            else if ((m = ua.match(/(?:iPhone|CPU) OS ([\d_]+)/))) os = 'iOS ' + m[1].replace(/_/g, '.');
+            else if (/iPad/.test(ua)) os = 'iPadOS';
+            else if ((m = ua.match(/Mac OS X ([\d_]+)/))) os = 'macOS ' + m[1].replace(/_/g, '.');
+            else if (/CrOS/.test(ua)) os = 'ChromeOS';
+            else if (/Linux/.test(ua)) os = 'Linux';
+
+            if ((m = ua.match(/Edg(?:e|A|iOS)?\/([\d.]+)/))) browser = 'Microsoft Edge ' + m[1].split('.')[0];
+            else if ((m = ua.match(/(?:OPR|Opera)\/([\d.]+)/))) browser = 'Opera ' + m[1].split('.')[0];
+            else if ((m = ua.match(/SamsungBrowser\/([\d.]+)/))) browser = 'Samsung Internet ' + m[1].split('.')[0];
+            else if ((m = ua.match(/(?:Firefox|FxiOS)\/([\d.]+)/))) browser = 'Mozilla Firefox ' + m[1].split('.')[0];
+            else if ((m = ua.match(/(?:Chrome|CriOS)\/([\d.]+)/))) browser = 'Google Chrome ' + m[1].split('.')[0];
+            else if ((m = ua.match(/Version\/([\d.]+).*Safari/))) browser = 'Apple Safari ' + m[1].split('.')[0];
+
+            const touchMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+            if (touchMac) { os = 'iPadOS'; deviceType = 'Tablet'; }
+            else if (/iPad|Tablet/.test(ua) || (/Android/.test(ua) && !/Mobile/.test(ua))) deviceType = 'Tablet';
+            else if (/Mobi|iPhone|Android/.test(ua)) deviceType = 'Mobile';
+            return { os: os, browser: browser, deviceType: deviceType };
+        }
+
         function getDeviceInfo() {
+            const p = parseUserAgent(navigator.userAgent);
+            return `${p.os} / ${p.browser} / ${p.deviceType} ${screen.width}x${screen.height}`;
+        }
+
+        async function collectDeviceDetails() {
             const ua = navigator.userAgent;
-            let browser = "Unknown Browser";
-            let os = "Unknown OS";
+            const p = parseUserAgent(ua);
+            let model = null;
+            try {
+                if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                    const h = await navigator.userAgentData.getHighEntropyValues(['model']);
+                    model = h.model || null;
+                }
+            } catch (e) {}
+            const conn = navigator.connection || {};
+            let tz = null;
+            try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (e) {}
+            return {
+                device_type: p.deviceType,
+                device_model: model,
+                os: p.os,
+                browser: p.browser,
+                screen: `${screen.width}x${screen.height}`,
+                viewport: `${window.innerWidth}x${window.innerHeight}`,
+                pixel_ratio: window.devicePixelRatio || 1,
+                cpu_cores: navigator.hardwareConcurrency || null,
+                device_memory: navigator.deviceMemory || null,
+                touch_points: navigator.maxTouchPoints || 0,
+                connection: conn.effectiveType || null,
+                language: navigator.language || null,
+                timezone: tz,
+                user_agent: ua
+            };
+        }
 
-            if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
-            else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
-            else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
-            else if (ua.indexOf("Trident") > -1) browser = "MS Internet Explorer";
-            else if (ua.indexOf("Edge") > -1) browser = "Microsoft Edge";
-            else if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
-            else if (ua.indexOf("Safari") > -1) browser = "Apple Safari";
+        function getVisitorId() {
+            let id = null, isNew = false;
+            try { id = localStorage.getItem('mineshop_visitor_id'); } catch (e) {}
+            if (!id) {
+                id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('v' + Date.now() + Math.random().toString(16).slice(2));
+                try { localStorage.setItem('mineshop_visitor_id', id); } catch (e) {}
+                isNew = true;
+            }
+            return { id: id, isNew: isNew };
+        }
 
-            if (ua.indexOf("Win") > -1) os = "Windows";
-            else if (ua.indexOf("Mac") > -1) os = "MacOS";
-            else if (ua.indexOf("Linux") > -1) os = "Linux";
-            else if (ua.indexOf("Android") > -1) os = "Android";
-            else if (ua.indexOf("like Mac") > -1) os = "iOS";
-
-            return `${os} / ${browser}`;
+        async function logVisitEvent(eventName) {
+            try {
+                const d = await collectDeviceDetails();
+                const v = getVisitorId();
+                const ref = document.referrer && document.referrer.indexOf(location.origin) !== 0 ? document.referrer : null;
+                await supabaseClient.from('site_visits').insert([Object.assign({
+                    visitor_id: v.id,
+                    user_email: currentUser ? currentUser.email : null,
+                    event: eventName,
+                    page: location.pathname,
+                    referrer: ref,
+                    is_new_visitor: v.isNew && eventName === 'visit'
+                }, d)]);
+            } catch (e) { console.warn('Visit log failed', e); }
         }
 
         function trackUserVisit(email) {
@@ -1363,6 +1519,10 @@
             let visits = parseInt(localStorage.getItem(visitsKey) || '0') + 1;
             localStorage.setItem(visitsKey, visits);
             return visits;
+        }
+
+        function newOrderId() {
+            return '#' + Math.floor(100000 + Math.random() * 900000);
         }
 
         function renderLiveAuction() {
@@ -1401,70 +1561,134 @@
 
         setInterval(renderLiveAuction, 4000);
 
+        function rowToUser(p) {
+            return {
+                id: p.id,
+                email: (p.email || '').toLowerCase(),
+                role: p.role || 'Buyer',
+                playerNick: p.player_nick || '',
+                eliteActive: !!p.elite_active,
+                adminRequested: !!p.admin_requested,
+                adminApproved: !!p.admin_approved,
+                referralCode: p.referral_code || '',
+                referredBy: p.referred_by || '',
+                purchasesCount: 0,
+                rank: 'Player'
+            };
+        }
+
+        function computeRank(u) {
+            if (u.role === 'Admin' || u.adminApproved) return 'Admin';
+            if (u.eliteActive) return 'Elite';
+            if (u.purchasesCount >= 40) return 'Expert';
+            if (u.purchasesCount >= 20) return 'Fan';
+            return 'Player';
+        }
+
+        function refreshDerivedUserFields() {
+            if (!currentUser) return;
+            const paid = ordersList.filter(o => o.email && o.email.toLowerCase() === currentUser.email && o.status !== 'Awaiting Payment' && !/^Elite Rank/.test(o.item || ''));
+            currentUser.purchasesCount = paid.length;
+            if (currentUser.adminApproved) currentUser.role = 'Admin';
+            currentUser.rank = computeRank(currentUser);
+        }
+
+        async function fetchMyProfile(userId) {
+            const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', userId).maybeSingle();
+            if (error) { console.error('Profile load error:', error); return null; }
+            return data;
+        }
+
+        async function establishSession(authUser, eventName) {
+            let p = await fetchMyProfile(authUser.id);
+            if (!p) {
+                await new Promise(r => setTimeout(r, 700));
+                p = await fetchMyProfile(authUser.id);
+            }
+            if (!p) {
+                alert('Your account exists but its profile could not be loaded. Please refresh the page and try again.');
+                return false;
+            }
+            currentUser = rowToUser(p);
+            if (!currentUser.referralCode) {
+                currentUser.referralCode = generateReferralCode(currentUser.email);
+                saveProfile();
+            }
+            refreshDerivedUserFields();
+
+            if (eventName) {
+                const d = await collectDeviceDetails();
+                supabaseClient.from('profiles').update({
+                    last_login: new Date().toISOString(),
+                    login_count: (p.login_count || 0) + 1,
+                    last_device: [d.device_type, d.os, d.browser, d.device_model].filter(Boolean).join(' / '),
+                    last_screen: d.screen,
+                    last_language: d.language,
+                    last_timezone: d.timezone
+                }).eq('id', currentUser.id).then(() => {});
+                logVisitEvent(eventName);
+            }
+            return true;
+        }
+
+        async function refreshMyProfile() {
+            if (!currentUser) return;
+            const p = await fetchMyProfile(currentUser.id);
+            if (p) {
+                currentUser = rowToUser(p);
+                refreshDerivedUserFields();
+                updateUIRoles();
+            }
+        }
+
+        async function saveProfile() {
+            if (!currentUser) return;
+            const { error } = await supabaseClient.from('profiles').update({
+                player_nick: currentUser.playerNick || '',
+                admin_requested: !!currentUser.adminRequested,
+                referral_code: currentUser.referralCode || null
+            }).eq('id', currentUser.id);
+            if (error) console.error('Profile save error:', error);
+        }
+
+        function saveUsers() { return saveProfile(); }
+
+        supabaseClient.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_OUT' && currentUser) {
+                currentUser = null;
+                setTimeout(() => { updateUIRoles(); }, 0);
+            }
+        });
+
         async function loadData() {
-            let savedUsers = localStorage.getItem('mineshop_users');
-            if (savedUsers) {
-                try { usersDB = JSON.parse(savedUsers); } catch(e) { usersDB = []; }
-            } else {
-                usersDB = [];
-            }
+            // Clean up anything the old local-only account system left in this browser
+            try {
+                localStorage.removeItem('mineshop_users');
+                localStorage.removeItem('mineshop_ronaldo_usage');
+                sessionStorage.removeItem('mineshop_session');
+            } catch (e) {}
 
-            let savedRonaldoUsage = localStorage.getItem('mineshop_ronaldo_usage');
-            if (savedRonaldoUsage) {
-                try { ronaldoUsedByUsers = JSON.parse(savedRonaldoUsage); } catch(e) { ronaldoUsedByUsers = {}; }
-            }
-
-            adminAccounts.forEach(adm => {
-                let adminIndex = usersDB.findIndex(u => u.email.toLowerCase() === adm.email.toLowerCase());
-                if (adminIndex !== -1) {
-                    usersDB[adminIndex].password = adm.password;
-                    usersDB[adminIndex].role = 'Admin';
-                } else {
-                    usersDB.push({ email: adm.email, password: adm.password, role: 'Admin', rank: 'Admin', purchasesCount: 0, playerNick: '', eliteActive: false, adminRequested: true, adminApproved: true });
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session && session.user) {
+                    await establishSession(session.user, null);
                 }
-            });
-            saveUsers();
+            } catch (e) { console.error('Session restore failed', e); }
 
             await loadOrdersFromSupabase();
-
-            let sessionUser = sessionStorage.getItem('mineshop_session');
-            if(sessionUser) {
-                try { 
-                    let parsed = JSON.parse(sessionUser);
-                    let found = usersDB.find(u => u.email.toLowerCase() === parsed.email.toLowerCase());
-                    if (found) {
-                        currentUser = found;
-                    } else {
-                        currentUser = parsed;
-                    }
-                    if (currentUser.email && adminAccounts.some(a => a.email.toLowerCase() === currentUser.email.toLowerCase())) {
-                        let match = adminAccounts.find(a => a.email.toLowerCase() === currentUser.email.toLowerCase());
-                        currentUser.role = 'Admin';
-                        currentUser.rank = 'Admin';
-                        currentUser.password = match.password;
-                        currentUser.adminApproved = true;
-                    }
-                } catch(e) { currentUser = null; }
-            }
             updateUIRoles();
             renderLiveAuction();
             renderFaq();
             loadReviews();
             updateReferralBox();
-        }
+            sessionReadyResolve();
 
-        function saveUsers() {
-            localStorage.setItem('mineshop_users', JSON.stringify(usersDB));
-            if (currentUser) {
-                let idx = usersDB.findIndex(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
-                if (idx !== -1) {
-                    sessionStorage.setItem('mineshop_session', JSON.stringify(usersDB[idx]));
+            try {
+                if (!sessionStorage.getItem('mineshop_visit_logged')) {
+                    sessionStorage.setItem('mineshop_visit_logged', '1');
+                    logVisitEvent('visit');
                 }
-            }
-        }
-
-        function saveRonaldoUsage() {
-            localStorage.setItem('mineshop_ronaldo_usage', JSON.stringify(ronaldoUsedByUsers));
+            } catch (e) {}
         }
 
         async function loadOrdersFromSupabase() {
@@ -1481,7 +1705,6 @@
                     id: row.order_id,
                     player: row.player,
                     email: row.email,
-                    password: row.password,
                     item: row.item,
                     price: row.price,
                     status: row.status,
@@ -1491,36 +1714,17 @@
                     last_visit: row.last_visit || ''
                 }));
 
-                usersDB.forEach(user => {
-                    let userOrders = ordersList.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
-                    user.purchasesCount = userOrders.length;
-                    
-                    let adminMatch = adminAccounts.some(a => a.email.toLowerCase() === user.email.toLowerCase());
-                    if (adminMatch || user.role === 'Admin' || user.adminApproved) {
-                        user.rank = 'Admin';
-                        user.role = 'Admin';
-                    } else if (user.eliteActive) {
-                        user.rank = 'Elite';
-                    } else if (user.purchasesCount >= 40) {
-                        user.rank = 'Expert';
-                    } else if (user.purchasesCount >= 20) {
-                        user.rank = 'Fan';
-                    } else {
-                        user.rank = 'Player';
-                    }
-                });
-                saveUsers();
-
-                if (currentUser) {
-                    let updatedCurr = usersDB.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
-                    if (updatedCurr) currentUser = updatedCurr;
-                }
+                refreshDerivedUserFields();
 
                 if (currentUser && currentUser.role !== 'Admin') {
+                    let seen = [];
+                    try { seen = JSON.parse(localStorage.getItem('mineshop_seen_delivered') || '[]'); } catch (e) { seen = []; }
                     ordersList.forEach(ord => {
-                        if (ord.email.toLowerCase() === currentUser.email.toLowerCase()) {
-                            if (ord.status === 'Delivered' && ord.admin_message && lastCheckedOrderStatus[ord.dbId] !== 'Delivered') {
+                        if (ord.email && ord.email.toLowerCase() === currentUser.email) {
+                            if (ord.status === 'Delivered' && ord.admin_message && !seen.includes(ord.dbId) && lastCheckedOrderStatus[ord.dbId] !== 'Delivered') {
                                 lastCheckedOrderStatus[ord.dbId] = 'Delivered';
+                                seen.push(ord.dbId);
+                                try { localStorage.setItem('mineshop_seen_delivered', JSON.stringify(seen)); } catch (e) {}
                                 showDeliveredScreenMessage(ord.admin_message);
                             }
                         }
@@ -1540,7 +1744,7 @@
                         order_id: newOrder.id,
                         player: newOrder.player,
                         email: newOrder.email,
-                        password: newOrder.password,
+                        password: '',
                         item: newOrder.item,
                         price: newOrder.price,
                         status: newOrder.status,
@@ -1668,36 +1872,40 @@
 
                 let stars = '';
                 for (let i = 1; i <= 5; i++) {
-                    stars += `<i class="fa-solid fa-star ${i <= review.rating ? 'text-amber-400' : 'text-gray-700'} text-xs"></i>`;
+                    stars += `<i class="fa-solid fa-star ${i <= Number(review.rating) ? 'text-amber-400' : 'text-gray-700'} text-xs"></i>`;
                 }
 
-                let initials = (review.nickname || '?').charAt(0).toUpperCase();
+                let initials = esc((review.nickname || '?').charAt(0).toUpperCase());
                 let dateStr = review.created_at ? new Date(review.created_at).toLocaleDateString() : '';
 
                 let screenshotHtml = '';
                 if (review.screenshot_url) {
-                    screenshotHtml = `<img src="${review.screenshot_url}" onclick="openLightbox('${review.screenshot_url}')" class="mt-3 rounded-xl border border-gray-700 w-full h-32 object-cover cursor-zoom-in hover:opacity-90 transition">`;
+                    if (/^https:\/\//i.test(review.screenshot_url)) {
+                        screenshotHtml = `<img src="${esc(review.screenshot_url)}" data-shot="1" class="mt-3 rounded-xl border border-gray-700 w-full h-32 object-cover cursor-zoom-in hover:opacity-90 transition">`;
+                    }
                 }
 
                 let deleteBtn = '';
                 if (currentUser && currentUser.role === 'Admin') {
-                    deleteBtn = `<button onclick="deleteReview('${review.id}')" class="interactive-btn text-red-400 hover:text-red-300 text-xs ml-auto"><i class="fa-solid fa-trash"></i></button>`;
+                    deleteBtn = `<button onclick="deleteReview('${esc(review.id)}')" class="interactive-btn text-red-400 hover:text-red-300 text-xs ml-auto"><i class="fa-solid fa-trash"></i></button>`;
                 }
 
                 card.innerHTML = `
                     <div class="flex items-center space-x-3 mb-2">
                         <div class="w-9 h-9 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center text-sm shrink-0">${initials}</div>
                         <div class="min-w-0">
-                            <p class="font-bold text-white text-sm truncate">${review.nickname}</p>
+                            <p class="font-bold text-white text-sm truncate">${esc(review.nickname)}</p>
                             <div class="flex space-x-0.5">${stars}</div>
                         </div>
-                        <span class="text-[10px] text-gray-500 ml-auto whitespace-nowrap">${dateStr}</span>
+                        <span class="text-[10px] text-gray-500 ml-auto whitespace-nowrap">${esc(dateStr)}</span>
                     </div>
-                    ${review.item ? `<p class="text-[11px] text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-bag-shopping mr-1"></i>${review.item}</p>` : ''}
-                    <p class="text-sm text-gray-300 leading-relaxed flex-grow">${review.comment || ''}</p>
+                    ${review.item ? `<p class="text-[11px] text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-bag-shopping mr-1"></i>${esc(review.item)}</p>` : ''}
+                    <p class="text-sm text-gray-300 leading-relaxed flex-grow">${esc(review.comment || '')}</p>
                     ${screenshotHtml}
                     <div class="flex mt-2">${deleteBtn}</div>
                 `;
+                const shotImg = card.querySelector('img[data-shot]');
+                if (shotImg) shotImg.addEventListener('click', () => openLightbox(review.screenshot_url));
                 grid.appendChild(card);
             });
         }
@@ -1902,8 +2110,10 @@
                     return;
                 }
 
-                alert('Payment confirmed! Your order is now being prepared for delivery. You can track it from your Personal Account.');
+                await sessionReady;
                 await loadOrdersFromSupabase();
+                await refreshMyProfile();
+                alert('Payment confirmed! Your order is being processed. If you bought the Elite rank, it is already active. You can track everything from your Personal Account.');
             } catch (err) {
                 console.error(err);
                 alert('We could not automatically confirm your payment. Please contact support with your order ID: ' + orderId);
@@ -2003,26 +2213,171 @@
             }
         }
 
-        async function recordReferralIfPending(newUser) {
-            const pendingRef = getPendingReferralCode();
-            if (!pendingRef) return;
-            if (pendingRef === newUser.referralCode) return; // can't refer yourself
+        // ===================================================================
+        // ADMIN INSIGHTS: players & visitors
+        // ===================================================================
+        let insightTab = 'players';
+        let insightPlayers = [];
+        let insightVisits = [];
 
-            const referrer = usersDB.find(u => u.referralCode === pendingRef);
-            const { error } = await supabaseClient.from('referrals').insert([{
-                referrer_email: referrer ? referrer.email : 'unknown',
-                referrer_code: pendingRef,
-                referred_email: newUser.email,
-                rewarded: false
-            }]);
+        function fmtDate(iso) {
+            if (!iso) return '-';
+            const d = new Date(iso);
+            return isNaN(d) ? '-' : d.toLocaleString();
+        }
 
-            if (error) {
-                console.error('Error recording referral:', error);
+        async function loadInsights() {
+            if (!currentUser || currentUser.role !== 'Admin') return;
+            const [pr, vr] = await Promise.all([
+                supabaseClient.from('profiles').select('*').order('created_at', { ascending: false }),
+                supabaseClient.from('site_visits').select('*').order('created_at', { ascending: false }).limit(3000)
+            ]);
+            if (pr.error) console.error('Players load error:', pr.error); else insightPlayers = pr.data || [];
+            if (vr.error) console.error('Visits load error:', vr.error); else insightVisits = vr.data || [];
+            renderInsights();
+        }
+        setInterval(() => { if (currentUser && currentUser.role === 'Admin') loadInsights(); }, 30000);
+
+        function setInsightTab(tab) {
+            insightTab = tab;
+            renderInsights();
+        }
+
+        function statCard(label, value, icon) {
+            return `<div class="bg-darkbg border border-gray-800 rounded-xl p-3">
+                <div class="text-[11px] text-gray-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid ${icon} text-purple-400"></i>${esc(label)}</div>
+                <div class="text-xl font-black text-white mt-1">${esc(value)}</div>
+            </div>`;
+        }
+
+        function ordersSpentBy(email) {
+            let total = 0, count = 0;
+            ordersList.forEach(o => {
+                if (o.email && o.email.toLowerCase() === email && o.status !== 'Awaiting Payment') {
+                    total += parseFloat(String(o.price).replace(/[^0-9.]/g, '')) || 0;
+                    count++;
+                }
+            });
+            return { total: total, count: count };
+        }
+
+        function renderInsights() {
+            const head = document.getElementById('insightHead');
+            const body = document.getElementById('insightBody');
+            const emptyEl = document.getElementById('insightEmpty');
+            if (!head || !body) return;
+
+            [['players', 'insightTabPlayers'], ['visitors', 'insightTabVisitors'], ['log', 'insightTabLog']].forEach(([t, id]) => {
+                document.getElementById(id).className = 'interactive-btn px-3 py-1.5 rounded-lg text-xs font-bold transition ' + (insightTab === t ? 'bg-purple-600 text-white' : 'bg-darkbg border border-gray-700 text-gray-400 hover:text-white');
+            });
+
+            const pageViews = insightVisits.filter(v => v.event === 'visit');
+            const uniqueAll = new Set(insightVisits.map(v => v.visitor_id));
+            const startToday = new Date(); startToday.setHours(0, 0, 0, 0);
+            const todayRows = insightVisits.filter(v => new Date(v.created_at) >= startToday);
+            const mobile = insightVisits.filter(v => v.device_type === 'Mobile').length;
+            document.getElementById('insightStats').innerHTML =
+                statCard('Total visits', pageViews.length, 'fa-eye') +
+                statCard('Unique visitors', uniqueAll.size, 'fa-users') +
+                statCard('Visits today', todayRows.filter(v => v.event === 'visit').length, 'fa-calendar-day') +
+                statCard('Unique today', new Set(todayRows.map(v => v.visitor_id)).size, 'fa-user-clock') +
+                statCard('Registered players', insightPlayers.length, 'fa-user-check') +
+                statCard('Admins', insightPlayers.filter(p => p.role === 'Admin').length, 'fa-shield-halved') +
+                statCard('Elite members', insightPlayers.filter(p => p.elite_active).length, 'fa-crown') +
+                statCard('Mobile share', insightVisits.length ? Math.round(mobile * 100 / insightVisits.length) + '%' : '-', 'fa-mobile-screen');
+
+            const q = (document.getElementById('insightSearch').value || '').toLowerCase().trim();
+            const match = (obj) => !q || Object.values(obj).some(v => v !== null && v !== undefined && String(v).toLowerCase().includes(q));
+            let rowsHtml = '';
+            let count = 0;
+
+            if (insightTab === 'players') {
+                head.innerHTML = `<tr class="border-b border-gray-800 text-[11px] text-gray-400 uppercase tracking-wider">
+                    <th class="py-2 px-2">Player</th><th class="py-2 px-2">Rank</th><th class="py-2 px-2">Orders / Spent</th><th class="py-2 px-2">Registered</th>
+                    <th class="py-2 px-2">Last login / Logins</th><th class="py-2 px-2">Last device</th><th class="py-2 px-2">Screen / Lang / TZ</th>
+                    <th class="py-2 px-2">Site visits</th><th class="py-2 px-2">Referral</th><th class="py-2 px-2 text-right">Access</th></tr>`;
+                insightPlayers.filter(p => match(p)).forEach(p => {
+                    const em = (p.email || '').toLowerCase();
+                    const sp = ordersSpentBy(em);
+                    const mine = insightVisits.filter(v => (v.user_email || '').toLowerCase() === em);
+                    const rank = p.role === 'Admin' ? 'Admin' : (p.elite_active ? 'Elite' : (sp.count >= 40 ? 'Expert' : (sp.count >= 20 ? 'Fan' : 'Player')));
+                    let action = '';
+                    if (p.role === 'Admin') {
+                        action = (currentUser && p.id === currentUser.id) ? '<span class="text-gray-600">you</span>' : `<button onclick="setPlayerAdmin('${esc(p.id)}', false)" class="interactive-btn bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 px-2.5 py-1 rounded-lg font-semibold">Revoke</button>`;
+                    } else {
+                        action = `<button onclick="setPlayerAdmin('${esc(p.id)}', true)" class="interactive-btn ${p.admin_requested ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'bg-gray-800 border border-gray-700 text-gray-300'} px-2.5 py-1 rounded-lg font-semibold">${p.admin_requested ? 'Approve request' : 'Make admin'}</button>`;
+                    }
+                    rowsHtml += `<tr class="hover:bg-darkbg/40 transition align-top">
+                        <td class="py-2.5 px-2"><div class="text-white font-semibold">${esc(p.email)}</div><div class="text-gray-500">${esc(p.player_nick || 'no nickname')}</div></td>
+                        <td class="py-2.5 px-2 text-gray-200">${esc(rank)}${p.admin_requested && p.role !== 'Admin' ? '<div class="text-amber-400">admin requested</div>' : ''}</td>
+                        <td class="py-2.5 px-2 text-gray-300">${sp.count} orders<div class="text-emerald-400 font-semibold">$${sp.total.toFixed(2)}</div></td>
+                        <td class="py-2.5 px-2 text-gray-400">${esc(fmtDate(p.created_at))}</td>
+                        <td class="py-2.5 px-2 text-gray-300">${esc(fmtDate(p.last_login))}<div class="text-gray-500">${esc(p.login_count || 0)} logins</div></td>
+                        <td class="py-2.5 px-2 text-gray-300">${esc(p.last_device || '-')}</td>
+                        <td class="py-2.5 px-2 text-gray-400">${esc(p.last_screen || '-')}<div>${esc(p.last_language || '-')} / ${esc(p.last_timezone || '-')}</div></td>
+                        <td class="py-2.5 px-2 text-gray-300">${mine.filter(v => v.event === 'visit').length} visits<div class="text-gray-500">${mine.length} events</div></td>
+                        <td class="py-2.5 px-2 text-gray-400"><span class="font-mono text-accent">${esc(p.referral_code || '-')}</span>${p.referred_by ? '<div>invited by <span class="font-mono">' + esc(p.referred_by) + '</span></div>' : ''}</td>
+                        <td class="py-2.5 px-2 text-right">${action}</td></tr>`;
+                    count++;
+                });
+            } else if (insightTab === 'visitors') {
+                head.innerHTML = `<tr class="border-b border-gray-800 text-[11px] text-gray-400 uppercase tracking-wider">
+                    <th class="py-2 px-2">Visitor</th><th class="py-2 px-2">Account(s)</th><th class="py-2 px-2">First seen</th><th class="py-2 px-2">Last seen</th>
+                    <th class="py-2 px-2">Visits / Events</th><th class="py-2 px-2">Device</th><th class="py-2 px-2">Hardware</th><th class="py-2 px-2">Screen / Lang / TZ</th><th class="py-2 px-2">Came from</th></tr>`;
+                const map = new Map();
+                insightVisits.forEach(v => { // newest first
+                    let g = map.get(v.visitor_id);
+                    if (!g) { g = { id: v.visitor_id, last: v, first: v, visits: 0, events: 0, emails: new Set(), ref: null }; map.set(v.visitor_id, g); }
+                    g.first = v; g.events++;
+                    if (v.event === 'visit') g.visits++;
+                    if (v.user_email) g.emails.add(v.user_email);
+                    if (v.referrer) g.ref = v.referrer;
+                });
+                Array.from(map.values()).map(g => Object.assign({}, g, { emailsText: Array.from(g.emails).join(', ') })).filter(g => match({ a: g.id, b: g.emailsText, c: g.last.os, d: g.last.browser, e: g.last.device_type, f: g.last.device_model, g: g.last.language, h: g.last.timezone, i: g.ref })).forEach(g => {
+                    const l = g.last;
+                    rowsHtml += `<tr class="hover:bg-darkbg/40 transition align-top">
+                        <td class="py-2.5 px-2"><div class="font-mono text-gray-300">${esc(String(g.id).slice(0, 8))}</div>${g.first.is_new_visitor ? '<div class="text-emerald-400">new</div>' : ''}</td>
+                        <td class="py-2.5 px-2 ${g.emailsText ? 'text-white' : 'text-gray-500'}">${esc(g.emailsText || 'Guest')}</td>
+                        <td class="py-2.5 px-2 text-gray-400">${esc(fmtDate(g.first.created_at))}</td>
+                        <td class="py-2.5 px-2 text-gray-400">${esc(fmtDate(l.created_at))}</td>
+                        <td class="py-2.5 px-2 text-gray-300">${g.visits} visits<div class="text-gray-500">${g.events} events</div></td>
+                        <td class="py-2.5 px-2 text-gray-300">${esc(l.device_type)}${l.device_model ? ' - ' + esc(l.device_model) : ''}<div class="text-gray-500">${esc(l.os)}</div><div class="text-gray-500">${esc(l.browser)}</div></td>
+                        <td class="py-2.5 px-2 text-gray-400">${l.cpu_cores ? esc(l.cpu_cores) + ' cores' : '-'}${l.device_memory ? ', ' + esc(l.device_memory) + ' GB' : ''}<div>${esc(l.touch_points || 0)} touch pts, ${esc(l.pixel_ratio || 1)}x</div><div>${esc(l.connection || '-')}</div></td>
+                        <td class="py-2.5 px-2 text-gray-400">${esc(l.screen)}<div>${esc(l.language || '-')} / ${esc(l.timezone || '-')}</div></td>
+                        <td class="py-2.5 px-2 text-gray-500 max-w-[180px] truncate" title="${esc(g.ref || '')}">${esc(g.ref || 'direct')}</td></tr>`;
+                    count++;
+                });
             } else {
-                newUser.referredBy = pendingRef;
-                saveUsers();
-                localStorage.removeItem('mineshop_pending_ref');
+                head.innerHTML = `<tr class="border-b border-gray-800 text-[11px] text-gray-400 uppercase tracking-wider">
+                    <th class="py-2 px-2">Time</th><th class="py-2 px-2">Event</th><th class="py-2 px-2">Visitor</th><th class="py-2 px-2">User</th><th class="py-2 px-2">Device</th>
+                    <th class="py-2 px-2">OS / Browser</th><th class="py-2 px-2">Screen / Viewport</th><th class="py-2 px-2">Language / TZ</th><th class="py-2 px-2">Page</th><th class="py-2 px-2">Came from</th></tr>`;
+                insightVisits.filter(v => match(v)).slice(0, 400).forEach(v => {
+                    rowsHtml += `<tr class="hover:bg-darkbg/40 transition align-top">
+                        <td class="py-2 px-2 text-gray-400 whitespace-nowrap">${esc(fmtDate(v.created_at))}</td>
+                        <td class="py-2 px-2 ${v.event === 'visit' ? 'text-gray-300' : 'text-emerald-400'} font-semibold">${esc(v.event)}</td>
+                        <td class="py-2 px-2 font-mono text-gray-400">${esc(String(v.visitor_id).slice(0, 8))}</td>
+                        <td class="py-2 px-2 ${v.user_email ? 'text-white' : 'text-gray-500'}">${esc(v.user_email || 'Guest')}</td>
+                        <td class="py-2 px-2 text-gray-300">${esc(v.device_type)}${v.device_model ? ' - ' + esc(v.device_model) : ''}</td>
+                        <td class="py-2 px-2 text-gray-400">${esc(v.os)}<div>${esc(v.browser)}</div></td>
+                        <td class="py-2 px-2 text-gray-400">${esc(v.screen)}<div>${esc(v.viewport || '')}</div></td>
+                        <td class="py-2 px-2 text-gray-400">${esc(v.language || '-')}<div>${esc(v.timezone || '-')}</div></td>
+                        <td class="py-2 px-2 text-gray-400">${esc(v.page || '/')}</td>
+                        <td class="py-2 px-2 text-gray-500 max-w-[160px] truncate" title="${esc(v.referrer || '')}">${esc(v.referrer || 'direct')}</td></tr>`;
+                    count++;
+                });
             }
+            body.innerHTML = rowsHtml;
+            emptyEl.classList.toggle('hidden', count > 0);
+        }
+
+        async function setPlayerAdmin(id, makeAdmin) {
+            if (!currentUser || currentUser.role !== 'Admin') return;
+            if (!makeAdmin && id === currentUser.id) { alert('You cannot revoke your own admin access.'); return; }
+            if (!confirm(makeAdmin ? 'Give this player administrator access?' : 'Remove administrator access from this player?')) return;
+            const patch = makeAdmin ? { role: 'Admin', admin_approved: true } : { role: 'Buyer', admin_approved: false, admin_requested: false };
+            const { error } = await supabaseClient.from('profiles').update(patch).eq('id', id);
+            if (error) { alert('Could not update access: ' + error.message); return; }
+            await loadInsights();
         }
 
         async function loadReferralsForAdmin() {
@@ -2059,9 +2414,9 @@
                     : `<button onclick="markReferralRewarded('${row.id}')" class="interactive-btn bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mark Rewarded</button>`;
 
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 text-gray-300">${row.referrer_email}</td>
-                    <td class="py-2.5 px-3 font-mono text-accent">${row.referrer_code}</td>
-                    <td class="py-2.5 px-3 text-gray-300">${row.referred_email}</td>
+                    <td class="py-2.5 px-3 text-gray-300">${esc(row.referrer_email)}</td>
+                    <td class="py-2.5 px-3 font-mono text-accent">${esc(row.referrer_code)}</td>
+                    <td class="py-2.5 px-3 text-gray-300">${esc(row.referred_email)}</td>
                     <td class="py-2.5 px-3 text-gray-500 text-xs">${row.created_at ? new Date(row.created_at).toLocaleDateString() : ''}</td>
                     <td class="py-2.5 px-3">${statusBadge}</td>
                     <td class="py-2.5 px-3 text-right">${actionBtn}</td>
@@ -2144,14 +2499,21 @@
         function updatePiglin() {
             let val = document.getElementById('piglinRange').value;
             document.getElementById('piglinVal').textContent = val;
-            let price = (val * 0.20).toFixed(2);
+            let price = (val * 0.25).toFixed(2);
             document.getElementById('piglinPrice').textContent = '$' + price;
+        }
+
+        function updateWither() {
+            let val = document.getElementById('witherRange').value;
+            document.getElementById('witherVal').textContent = val;
+            let price = (val * 0.20).toFixed(2);
+            document.getElementById('witherPrice').textContent = '$' + price;
         }
 
         function updateTotem() {
             let val = document.getElementById('totemRange').value;
             document.getElementById('totemVal').textContent = val;
-            let price = (val * 0.05).toFixed(2);
+            let price = (val * 0.15).toFixed(2);
             document.getElementById('totemPrice').textContent = '$' + price;
         }
 
@@ -2204,110 +2566,67 @@
         function removeFromCart(index) {
             cartItems.splice(index, 1);
             if (cartItems.length === 0) {
-                appliedPromo = null; 
-                appliedGenericPromo = null;
+                appliedPromos = [];
             }
-            updateCartUI();
-        }
-
-        async function applyPromoCode() {
-            let rawCode = document.getElementById('promoInput').value.trim();
-            let code = rawCode.toUpperCase();
-            let msgEl = document.getElementById('promoMessage');
-
-            if (!code) {
-                msgEl.textContent = 'Please enter a promo code.';
-                msgEl.className = 'text-xs mt-1.5 text-red-400';
-                return;
-            }
-
-            if (rawCode.toLowerCase() === 'ronaldo') {
-                if (!currentUser) {
-                    msgEl.textContent = 'Please log in to use promo codes.';
-                    msgEl.className = 'text-xs mt-1.5 text-red-400';
-                    return;
-                }
-
-                if (ronaldoUsedByUsers[currentUser.email.toLowerCase()]) {
-                    msgEl.textContent = 'You have already used this promo code once!';
-                    msgEl.className = 'text-xs mt-1.5 text-red-400';
-                    return;
-                }
-
-                if (appliedPromo === 'ronaldo') {
-                    msgEl.textContent = 'Promo code already applied!';
-                    msgEl.className = 'text-xs mt-1.5 text-amber-400';
-                    return;
-                }
-
-                appliedPromo = 'ronaldo';
-                appliedGenericPromo = null;
-                msgEl.textContent = 'Success! Ronaldo code applied (5% off on 1 most expensive item).';
-                msgEl.className = 'text-xs mt-1.5 text-emerald-400';
-                updateCartUI();
-                return;
-            }
-
-            // ---- New-style percentage promo codes (max 15%, one-time per account) ----
-            const promo = PROMO_CODES[code];
-            if (!promo) {
-                msgEl.textContent = 'Invalid promo code.';
-                msgEl.className = 'text-xs mt-1.5 text-red-400';
-                return;
-            }
-
-            if (!currentUser) {
-                msgEl.textContent = 'Please log in to use promo codes.';
-                msgEl.className = 'text-xs mt-1.5 text-red-400';
-                return;
-            }
-
-            if (appliedPromo === 'ronaldo' || (appliedGenericPromo && appliedGenericPromo.code === code)) {
-                msgEl.textContent = 'A promo code is already applied to this order.';
-                msgEl.className = 'text-xs mt-1.5 text-amber-400';
-                return;
-            }
-
-            if (promo.firstOrderOnly) {
-                let hasPriorOrder = ordersList.some(o => o.email && o.email.toLowerCase() === currentUser.email.toLowerCase());
-                if (hasPriorOrder) {
-                    msgEl.textContent = 'This code is only valid for your first order.';
-                    msgEl.className = 'text-xs mt-1.5 text-red-400';
-                    return;
-                }
-            }
-
-            msgEl.textContent = 'Checking code...';
-            msgEl.className = 'text-xs mt-1.5 text-gray-400';
-
-            let alreadyUsed = await hasUsedPromoCode(currentUser.email, code);
-            if (alreadyUsed) {
-                msgEl.textContent = 'You have already used this promo code once!';
-                msgEl.className = 'text-xs mt-1.5 text-red-400';
-                return;
-            }
-
-            // Safety cap: promo discounts never exceed 15%, no matter what.
-            let safePercent = Math.min(promo.percent, 15);
-
-            appliedGenericPromo = { code: code, percent: safePercent };
-            appliedPromo = null;
-            msgEl.textContent = `Success! ${promo.label} applied to your cart.`;
-            msgEl.className = 'text-xs mt-1.5 text-emerald-400';
             updateCartUI();
         }
 
         function getEliteDiscountPercent() {
             if (!currentUser || currentUser.rank !== 'Elite') return 0;
-            let key = 'elite_discount_' + currentUser.email.toLowerCase() + '_' + new Date().toDateString();
-            let savedDisc = localStorage.getItem(key);
-            if (savedDisc !== null) {
-                return parseInt(savedDisc);
-            } else {
-                let randDisc = Math.floor(Math.random() * 21) + 5;
-                localStorage.setItem(key, randDisc);
-                return randDisc;
+            // Weekly discount (5-25%), the same on every device for the same account.
+            const now = new Date();
+            const week = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 604800000);
+            const seed = currentUser.email + '|' + now.getFullYear() + '|' + week;
+            let h = 0;
+            for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+            return 5 + (h % 21);
+        }
+
+        function getPromoPercentSum() {
+            return appliedPromos.reduce((sum, p) => sum + p.percent, 0);
+        }
+
+        function getTotalDiscountPercent() {
+            return Math.min(getEliteDiscountPercent() + getPromoPercentSum(), MAX_TOTAL_DISCOUNT);
+        }
+
+        function setPromoMsg(text, cls) {
+            const el = document.getElementById('promoMessage');
+            el.textContent = text;
+            el.className = 'text-xs mt-1.5 ' + cls;
+        }
+
+        async function applyPromoCode() {
+            const input = document.getElementById('promoInput');
+            const code = input.value.trim().toUpperCase();
+
+            if (!code) { setPromoMsg('Please enter a promo code.', 'text-red-400'); return; }
+            const promo = PROMO_CODES[code];
+            if (!promo) { setPromoMsg('Invalid promo code.', 'text-red-400'); return; }
+            if (!currentUser) { setPromoMsg('Please log in to use promo codes.', 'text-red-400'); return; }
+            if (appliedPromos.some(p => p.code === code)) { setPromoMsg('This code is already applied to your order.', 'text-amber-400'); return; }
+            if (appliedPromos.length >= MAX_PROMOS_PER_ORDER) { setPromoMsg('You can apply up to ' + MAX_PROMOS_PER_ORDER + ' promo codes per order.', 'text-amber-400'); return; }
+            if (getEliteDiscountPercent() + getPromoPercentSum() >= MAX_TOTAL_DISCOUNT) { setPromoMsg('Maximum combined discount (' + MAX_TOTAL_DISCOUNT + '%) already reached.', 'text-amber-400'); return; }
+
+            if (promo.firstOrderOnly) {
+                const hasPaidOrder = ordersList.some(o => o.email && o.email.toLowerCase() === currentUser.email && o.status !== 'Awaiting Payment' && !/^Elite Rank/.test(o.item || ''));
+                if (hasPaidOrder) { setPromoMsg('This code is only valid for your first order.', 'text-red-400'); return; }
             }
+
+            setPromoMsg('Checking code...', 'text-gray-400');
+            const alreadyUsed = await hasUsedPromoCode(currentUser.email, code);
+            if (alreadyUsed) { setPromoMsg('You have already used this promo code once!', 'text-red-400'); return; }
+
+            appliedPromos.push({ code: code, percent: Math.min(promo.percent, 15) });
+            input.value = '';
+            setPromoMsg('Code applied! ' + promo.label + '.', 'text-emerald-400');
+            updateCartUI();
+        }
+
+        function removePromo(code) {
+            appliedPromos = appliedPromos.filter(p => p.code !== code);
+            setPromoMsg('', 'text-gray-400');
+            updateCartUI();
         }
 
         function updateCartUI() {
@@ -2321,13 +2640,17 @@
             container.innerHTML = '';
             countBadge.textContent = cartItems.length;
 
+            const promosListEl = document.getElementById('appliedPromosList');
+            const breakdownEl = document.getElementById('discountBreakdown');
+
             if (cartItems.length === 0) {
                 emptyMsg.style.display = 'block';
                 promoSection.classList.add('hidden');
                 checkoutBtn.classList.add('hidden');
                 totalPriceEl.textContent = '$0.00';
-                appliedPromo = null;
-                appliedGenericPromo = null;
+                appliedPromos = [];
+                promosListEl.innerHTML = '';
+                breakdownEl.textContent = '';
                 return;
             }
 
@@ -2335,47 +2658,25 @@
             promoSection.classList.remove('hidden');
             checkoutBtn.classList.remove('hidden');
 
+            const eliteDisc = getEliteDiscountPercent();
+            const promoSum = getPromoPercentSum();
+            const pct = getTotalDiscountPercent();
             let totalSum = 0;
-            let eliteDisc = getEliteDiscountPercent();
-
-            let maxPriceIndex = -1;
-            let maxItemPrice = -1;
-            if (appliedPromo === 'ronaldo' && cartItems.length > 0) {
-                cartItems.forEach((item, idx) => {
-                    let itemTotal = item.unitPrice * item.qtyNum;
-                    if (itemTotal > maxItemPrice) {
-                        maxItemPrice = itemTotal;
-                        maxPriceIndex = idx;
-                    }
-                });
-            }
 
             cartItems.forEach((item, index) => {
                 let numericPrice = item.unitPrice * item.qtyNum;
-                let isRonaldoDiscounted = (appliedPromo === 'ronaldo' && index === maxPriceIndex);
-                let genericPercent = appliedGenericPromo ? appliedGenericPromo.percent : 0;
-                
-                let displayPrice = numericPrice;
-                if (isRonaldoDiscounted) {
-                    displayPrice = numericPrice * 0.95; 
-                } else if (genericPercent > 0) {
-                    displayPrice = numericPrice * (1 - genericPercent / 100);
-                } else if (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0) {
-                    displayPrice = numericPrice * (1 - eliteDisc / 100);
-                }
-
+                let displayPrice = numericPrice * (1 - pct / 100);
                 totalSum += displayPrice;
 
                 let div = document.createElement('div');
                 div.className = 'py-3 flex items-center justify-between';
-                
+
                 let priceHtml = '';
-                if (isRonaldoDiscounted || genericPercent > 0 || (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0)) {
-                    let badgeLabel = isRonaldoDiscounted ? '-5%' : (genericPercent > 0 ? `-${genericPercent}% (${appliedGenericPromo.code})` : `-${eliteDisc}% (Elite)`);
+                if (pct > 0) {
                     priceHtml = `
                         <div class="text-right">
                             <span class="text-xs text-gray-500 line-through mr-1">$${numericPrice.toFixed(2)}</span>
-                            <span class="font-bold text-emerald-400 text-sm">$${displayPrice.toFixed(2)} <span class="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300">${badgeLabel}</span></span>
+                            <span class="font-bold text-emerald-400 text-sm">$${displayPrice.toFixed(2)} <span class="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300">-${pct}%</span></span>
                         </div>
                     `;
                 } else {
@@ -2384,8 +2685,8 @@
 
                 div.innerHTML = `
                     <div>
-                        <h4 class="font-bold text-white text-sm">${item.name}</h4>
-                        <p class="text-xs text-gray-400">Quantity: ${item.qty}</p>
+                        <h4 class="font-bold text-white text-sm">${esc(item.name)}</h4>
+                        <p class="text-xs text-gray-400">Quantity: ${esc(item.qty)}</p>
                     </div>
                     <div class="flex items-center space-x-3">
                         ${priceHtml}
@@ -2396,6 +2697,21 @@
                 `;
                 container.appendChild(div);
             });
+
+            promosListEl.innerHTML = appliedPromos.map(p => `
+                <span class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono font-bold px-2 py-1 rounded-lg">
+                    ${esc(p.code)} <span class="text-emerald-400/80">-${p.percent}%</span>
+                    <button onclick="removePromo('${esc(p.code)}')" class="interactive-btn text-emerald-300 hover:text-white" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                </span>`).join('');
+
+            const parts = [];
+            if (eliteDisc > 0) parts.push(`Elite ${eliteDisc}%`);
+            if (promoSum > 0) parts.push(`Promo codes ${promoSum}%`);
+            if (parts.length) {
+                breakdownEl.textContent = parts.join(' + ') + ' = ' + pct + '% off' + ((eliteDisc + promoSum) > MAX_TOTAL_DISCOUNT ? ' (capped at ' + MAX_TOTAL_DISCOUNT + '%)' : '');
+            } else {
+                breakdownEl.textContent = 'You can stack up to ' + MAX_PROMOS_PER_ORDER + ' promo codes (total discount max ' + MAX_TOTAL_DISCOUNT + '%).';
+            }
 
             totalPriceEl.textContent = '$' + totalSum.toFixed(2);
         }
@@ -2431,53 +2747,28 @@
             }
 
             let summaryItemsStr = cartItems.map(i => `${i.name} (${i.qty})`).join(', ');
-            
-            let totalSum = 0;
-            let eliteDisc = getEliteDiscountPercent();
-            let maxPriceIndex = -1;
-            let maxItemPrice = -1;
-            if (appliedPromo === 'ronaldo' && cartItems.length > 0) {
-                cartItems.forEach((item, idx) => {
-                    let itemTotal = item.unitPrice * item.qtyNum;
-                    if (itemTotal > maxItemPrice) {
-                        maxItemPrice = itemTotal;
-                        maxPriceIndex = idx;
-                    }
-                });
-            }
 
-            cartItems.forEach((item, index) => {
-                let numericPrice = item.unitPrice * item.qtyNum;
-                if (appliedPromo === 'ronaldo' && index === maxPriceIndex) {
-                    numericPrice *= 0.95;
-                } else if (appliedGenericPromo) {
-                    numericPrice *= (1 - appliedGenericPromo.percent / 100);
-                } else if (currentUser && currentUser.rank === 'Elite' && eliteDisc > 0) {
-                    numericPrice *= (1 - eliteDisc / 100);
-                }
-                totalSum += numericPrice;
+            let eliteDisc = getEliteDiscountPercent();
+            let pct = getTotalDiscountPercent();
+            let totalSum = 0;
+            cartItems.forEach(item => {
+                totalSum += item.unitPrice * item.qtyNum * (1 - pct / 100);
             });
 
-            if (appliedPromo === 'ronaldo' && currentUser) {
-                ronaldoUsedByUsers[currentUser.email.toLowerCase()] = true;
-                saveRonaldoUsage();
-            }
-
-            if (appliedGenericPromo && currentUser) {
-                await markPromoCodeUsed(currentUser.email, appliedGenericPromo.code);
+            for (const p of appliedPromos) {
+                await markPromoCodeUsed(currentUser.email, p.code);
             }
 
             let visits = trackUserVisit(currentUser.email);
             let deviceInfo = getDeviceInfo();
 
-            let randomId = '#' + Math.floor(1000 + Math.random() * 9000);
-            let promoLabel = appliedPromo === 'ronaldo' ? ' [Promo: Ronaldo]' : (appliedGenericPromo ? ` [Promo: ${appliedGenericPromo.code}]` : '');
+            let randomId = newOrderId();
+            let promoLabel = appliedPromos.length ? ` [Promo: ${appliedPromos.map(p => p.code).join('+')}]` : '';
             let newOrder = {
                 id: randomId,
                 player: nick,
-                email: currentUser.email,       
-                password: currentUser.password, 
-                item: summaryItemsStr + promoLabel + (currentUser.rank === 'Elite' ? ` [Elite Discount ${eliteDisc}%]` : ''),
+                email: currentUser.email,
+                item: summaryItemsStr + promoLabel + (eliteDisc > 0 ? ` [Elite Discount ${eliteDisc}%]` : '') + (pct > 0 ? ` [Total -${pct}%]` : ''),
                 price: '$' + totalSum.toFixed(2),
                 status: 'Awaiting Payment',
                 device_info: deviceInfo,
@@ -2487,8 +2778,7 @@
             await saveOrderToSupabase(newOrder);
 
             cartItems = [];
-            appliedPromo = null;
-            appliedGenericPromo = null;
+            appliedPromos = [];
             updateCartUI();
             closeCartModal();
             redirectToPayPal(randomId, totalSum);
@@ -2527,13 +2817,12 @@
             let visits = trackUserVisit(currentUser.email);
             let deviceInfo = getDeviceInfo();
 
-            let randomId = '#' + Math.floor(1000 + Math.random() * 9000);
+            let randomId = newOrderId();
             let numericAmount = parseFloat(String(directProductData.price).replace(/[^0-9.]/g, '')) || 0;
             let newOrder = {
                 id: randomId,
                 player: nick,
-                email: currentUser.email,       
-                password: currentUser.password, 
+                email: currentUser.email,
                 item: `${directProductData.name} (${directProductData.qty})`,
                 price: directProductData.price,
                 status: 'Awaiting Payment',
@@ -2597,76 +2886,76 @@
         async function handleAuthAction() {
             let email = document.getElementById('emailInput').value.trim().toLowerCase();
             let password = document.getElementById('passwordInput').value.trim();
-            
-            if(!email || !password) {
+
+            if (!email || !password) {
                 alert('Please enter both email and password.');
                 return;
             }
+            if (isRegisterMode && password.length < 6) {
+                alert('Your password must be at least 6 characters long.');
+                return;
+            }
 
-            let matchingAdmin = adminAccounts.find(a => a.email.toLowerCase() === email);
-            let isAdmin = Boolean(matchingAdmin);
+            const btn = document.getElementById('authSubmitBtn');
+            btn.disabled = true;
+            try {
+                if (isRegisterMode) {
+                    const ownCode = generateReferralCode(email);
+                    const pending = getPendingReferralCode();
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: { data: { referral_code: ownCode, referred_by: (pending && pending !== ownCode) ? pending : null } }
+                    });
 
-            if(isRegisterMode) {
-                let existingUser = usersDB.find(u => u.email.toLowerCase() === email);
-                if(existingUser) {
-                    alert('Error: An account with this Email already exists! Please use Sign In instead.');
-                    return;
-                }
-
-                let newUser = {
-                    email: email,
-                    password: password,
-                    role: isAdmin ? 'Admin' : 'Buyer',
-                    rank: isAdmin ? 'Admin' : 'Player',
-                    purchasesCount: 0,
-                    playerNick: '',
-                    eliteActive: false,
-                    adminRequested: false,
-                    adminApproved: isAdmin,
-                    referralCode: generateReferralCode(email)
-                };
-
-                usersDB.push(newUser);
-                saveUsers();
-                await recordReferralIfPending(newUser);
-
-                currentUser = newUser;
-                sessionStorage.setItem('mineshop_session', JSON.stringify(currentUser));
-                updateUIRoles();
-                closeAuthModal();
-                alert('Registration successful! You are now logged in.');
-
-            } else {
-                let foundUser = usersDB.find(u => u.email.toLowerCase() === email);
-                
-                if(!foundUser) {
-                    if (isAdmin) {
-                        foundUser = { email: email, password: password, role: 'Admin', rank: 'Admin', purchasesCount: 0, playerNick: '', eliteActive: false, adminRequested: false, adminApproved: true };
-                        usersDB.push(foundUser);
-                        saveUsers();
-                    } else {
-                        alert('Account with this email does not exist! Please register first.');
+                    if (error) {
+                        if (/already/i.test(error.message)) alert('Error: An account with this Email already exists! Please use Sign In instead.');
+                        else alert(error.message);
                         return;
                     }
-                }
+                    if (data.user && data.user.identities && data.user.identities.length === 0) {
+                        alert('Error: An account with this Email already exists! Please use Sign In instead.');
+                        return;
+                    }
+                    if (!data.session) {
+                        alert('Account created! Please confirm your email address using the link we sent you, then sign in.');
+                        return;
+                    }
 
-                if(!isAdmin && foundUser.password !== password) {
-                    alert('Incorrect password! Please enter the correct password for this email.');
-                    return;
+                    const ok = await establishSession(data.user, 'register');
+                    if (!ok) return;
+                    localStorage.removeItem('mineshop_pending_ref');
+                    if (currentUser.referredBy) {
+                        supabaseClient.from('profiles').select('email').eq('referral_code', currentUser.referredBy).maybeSingle()
+                            .then(({ data: refP }) => supabaseClient.from('referrals').insert([{
+                                referrer_email: refP ? refP.email : 'unknown',
+                                referrer_code: currentUser.referredBy,
+                                referred_email: currentUser.email,
+                                rewarded: false
+                            }]))
+                            .then(({ error }) => { if (error) console.error('Referral log error:', error); });
+                    }
+                    await loadOrdersFromSupabase();
+                    updateUIRoles();
+                    closeAuthModal();
+                    alert('Registration successful! You are now logged in.');
+                } else {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+                    if (error) {
+                        alert(/invalid login/i.test(error.message) ? 'Incorrect email or password.' : error.message);
+                        return;
+                    }
+                    const ok = await establishSession(data.user, 'login');
+                    if (!ok) return;
+                    await loadOrdersFromSupabase();
+                    updateUIRoles();
+                    closeAuthModal();
                 }
-
-                if (isAdmin) {
-                    foundUser.role = 'Admin';
-                    foundUser.rank = 'Admin';
-                    foundUser.password = matchingAdmin.password;
-                    foundUser.adminApproved = true;
-                    saveUsers();
-                }
-
-                currentUser = foundUser;
-                sessionStorage.setItem('mineshop_session', JSON.stringify(currentUser));
-                updateUIRoles();
-                closeAuthModal();
+            } catch (err) {
+                console.error(err);
+                alert('Something went wrong. Please try again.');
+            } finally {
+                btn.disabled = false;
             }
         }
 
@@ -2726,7 +3015,7 @@
                 eliteBtn.textContent = 'Purchased (Elite)';
                 eliteBtn.className = 'interactive-btn w-full bg-purple-600/40 text-purple-300 py-2 rounded-xl text-xs font-bold cursor-default';
             } else {
-                eliteBtn.textContent = 'Buy for $1.99';
+                eliteBtn.textContent = 'Buy for $' + ELITE_PRICE.toFixed(2);
                 eliteBtn.className = 'interactive-btn w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-xs font-bold transition';
             }
 
@@ -2737,40 +3026,65 @@
                 requestAdminBtn.disabled = true;
                 requestAdminBtn.className = 'bg-gray-800 text-gray-500 px-4 py-2 rounded-xl text-xs font-bold cursor-not-allowed';
             } else if (currentUser.adminRequested) {
-                adminStatusText.textContent = 'Status: Request sent for review';
+                adminStatusText.textContent = 'Status: Request sent - waiting for approval';
                 adminStatusText.className = 'text-xs text-amber-400 font-semibold';
-                requestAdminBtn.textContent = 'Pending...';
-                requestAdminBtn.disabled = true;
-                requestAdminBtn.className = 'bg-gray-800 text-gray-500 px-4 py-2 rounded-xl text-xs font-bold cursor-not-allowed';
+                requestAdminBtn.textContent = 'Resend Email';
+                requestAdminBtn.disabled = false;
+                requestAdminBtn.className = 'interactive-btn bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 px-4 py-2 rounded-xl text-xs font-bold transition';
             } else {
                 adminStatusText.textContent = 'Status: Not requested';
                 adminStatusText.className = 'text-xs text-gray-400 font-semibold';
-                requestAdminBtn.textContent = 'Request Approval';
+                requestAdminBtn.textContent = 'Send Request to Administration';
                 requestAdminBtn.disabled = false;
                 requestAdminBtn.className = 'interactive-btn bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition';
             }
         }
 
         async function buyEliteRank() {
+            if (!currentUser) { openAuthModal(); return; }
             if (currentUser.rank === 'Elite' || currentUser.eliteActive) {
                 alert('You already have the Elite rank!');
                 return;
             }
-            if (confirm('Buy Elite rank for $1.99 and get weekly discounts from 5% to 25%?')) {
-                currentUser.eliteActive = true;
-                currentUser.rank = 'Elite';
-                saveUsers();
-                renderAccountRankAndShop();
-                alert('Congratulations! You have successfully purchased the Elite rank!');
+            if (currentUser.role === 'Admin') {
+                alert('Administrators already have full access and do not need the Elite rank.');
+                return;
             }
+            if (!confirm('Buy Elite rank for $' + ELITE_PRICE.toFixed(2) + ' and get weekly discounts from 5% to 25%?\n\nYou will be redirected to PayPal to complete the payment. Elite is activated automatically after payment.')) return;
+
+            const orderId = newOrderId();
+            const nick = currentUser.playerNick || currentUser.email.split('@')[0];
+            await saveOrderToSupabase({
+                id: orderId,
+                player: nick,
+                email: currentUser.email,
+                item: 'Elite Rank',
+                price: '$' + ELITE_PRICE.toFixed(2),
+                status: 'Awaiting Payment',
+                device_info: getDeviceInfo(),
+                visit_count: trackUserVisit(currentUser.email)
+            });
+            closeAccountModal();
+            redirectToPayPal(orderId, ELITE_PRICE);
         }
 
-        function requestAdminApproval() {
-            if (currentUser.adminRequested || currentUser.adminApproved) return;
-            currentUser.adminRequested = true;
-            saveUsers();
+        async function requestAdminApproval() {
+            if (!currentUser || currentUser.adminApproved || currentUser.role === 'Admin') return;
+
+            const subject = 'Admin access request - MineShop';
+            const body = 'Hello,\n\nI would like to request administrator access on MineShop.\n\n' +
+                'Account email: ' + currentUser.email + '\n' +
+                'Minecraft nickname: ' + (currentUser.playerNick || '(not set)') + '\n' +
+                'Account ID: ' + currentUser.id + '\n\n' +
+                'Why I would like to become an admin:\n\n';
+
+            if (!currentUser.adminRequested) {
+                currentUser.adminRequested = true;
+                await saveProfile();
+            }
             renderAccountRankAndShop();
-            alert('Admin rank request successfully sent! Wait for owner approval.');
+            alert('Your email app will now open with a ready-made request addressed to the administration. Please press Send to complete your request.');
+            window.location.href = 'mailto:' + ADMIN_REQUEST_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         }
 
         function renderUserPurchasesHistory() {
@@ -2797,32 +3111,28 @@
 
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 font-mono text-gray-400">${ord.id}</td>
-                    <td class="py-2.5 px-3 text-gray-200">${ord.item}</td>
-                    <td class="py-2.5 px-3 font-bold text-emerald-400">${ord.price}</td>
+                    <td class="py-2.5 px-3 font-mono text-gray-400">${esc(ord.id)}</td>
+                    <td class="py-2.5 px-3 text-gray-200">${esc(ord.item)}</td>
+                    <td class="py-2.5 px-3 font-bold text-emerald-400">${esc(ord.price)}</td>
                     <td class="py-2.5 px-3 text-right">${statusBadge}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function logoutUser() {
+        async function logoutUser() {
+            try { await supabaseClient.auth.signOut(); } catch (e) { console.error(e); }
             currentUser = null;
-            sessionStorage.removeItem('mineshop_session');
+            ordersList = [];
+            appliedPromos = [];
             closeAccountModal();
             updateUIRoles();
+            if (typeof renderReviews === 'function') renderReviews();
+            updateReferralBox();
             alert('You have logged out of your account.');
         }
 
         function updateUIRoles() {
-            if (currentUser && currentUser.email) {
-                let match = adminAccounts.find(a => a.email.toLowerCase() === currentUser.email.toLowerCase());
-                if (match) {
-                    currentUser.role = 'Admin';
-                    currentUser.rank = 'Admin';
-                }
-            }
-
             const badge = document.getElementById('userBadge');
             const roleText = document.getElementById('roleText');
             const roleIcon = document.getElementById('roleIcon');
@@ -2844,6 +3154,8 @@
                     navAdminLink.classList.remove('hidden');
                     adminEmailDisplay.textContent = currentUser.email;
                     loadOrdersFromSupabase();
+                    loadReferralsForAdmin();
+                    loadInsights();
                 } else {
                     roleText.textContent = currentUser.rank || 'Player';
                     roleIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
@@ -2857,6 +3169,8 @@
                 adminPanel.classList.add('hidden');
                 navAdminLink.classList.add('hidden');
             }
+            updateReferralBox();
+            if (typeof renderReviews === 'function') renderReviews();
         }
 
         function showWaitScreenMessage() {
@@ -2886,7 +3200,7 @@
             icon.className = 'inline-flex p-4 rounded-full bg-emerald-500/10 text-emerald-400 mb-4 text-3xl';
             icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
             title.textContent = 'Order Delivered!';
-            textEl.innerHTML = `Administrator sent you all coordinates and instructions:<br><span class="text-white font-medium font-sans text-base mt-2 inline-block whitespace-pre-line">${msg}</span>`;
+            textEl.innerHTML = `Administrator sent you a message about your order:<br><span class="text-white font-medium font-sans text-base mt-2 inline-block whitespace-pre-line">${esc(msg)}</span>`;
 
             const modal = document.getElementById('screenMessageModal');
             modal.classList.remove('modal-hidden');
@@ -2929,24 +3243,17 @@
                 let tr = document.createElement('tr');
                 tr.className = 'hover:bg-darkbg/40 transition';
                 tr.innerHTML = `
-                    <td class="py-4 px-3 font-mono text-xs text-gray-400">${order.id}</td>
-                    <td class="py-4 px-3 font-bold text-white">${order.player}</td>
+                    <td class="py-4 px-3 font-mono text-xs text-gray-400">${esc(order.id)}</td>
+                    <td class="py-4 px-3 font-bold text-white">${esc(order.player)}</td>
                     <td class="py-4 px-3 text-xs">
-                        <div class="text-gray-200 font-medium">${order.email}</div>
-                        <div class="text-gray-400 mt-0.5"><i class="fa-solid fa-laptop text-accent mr-1"></i> ${order.device_info}</div>
-                        <div class="text-emerald-400 font-semibold mt-0.5"><i class="fa-solid fa-chart-simple mr-1"></i> Visits: ${order.visit_count}</div>
+                        <div class="text-gray-200 font-medium">${esc(order.email)}</div>
+                        <div class="text-gray-400 mt-0.5"><i class="fa-solid fa-laptop text-accent mr-1"></i> ${esc(order.device_info)}</div>
+                        <div class="text-emerald-400 font-semibold mt-0.5"><i class="fa-solid fa-chart-simple mr-1"></i> Visits: ${esc(order.visit_count)}</div>
                     </td>
-                    <td class="py-4 px-3 font-mono text-xs">
-                        <span id="pass-text-${index}" class="hidden text-accent">${order.password}</span>
-                        <span id="pass-dots-${index}" class="text-gray-500 tracking-widest">••••••••</span>
-                        <button onclick="togglePassword(${index})" class="interactive-btn ml-2 text-gray-400 hover:text-white transition" title="Show/Hide Password">
-                            <i id="pass-icon-${index}" class="fa-solid fa-eye"></i>
-                        </button>
-                    </td>
-                    <td class="py-4 px-3 max-w-xs truncate text-xs">${order.item}</td>
-                    <td class="py-4 px-3 font-semibold text-emerald-400 text-sm">${order.price}</td>
+                    <td class="py-4 px-3 max-w-xs truncate text-xs" title="${esc(order.item)}">${esc(order.item)}</td>
+                    <td class="py-4 px-3 font-semibold text-emerald-400 text-sm">${esc(order.price)}</td>
                     <td class="py-4 px-3">
-                        <span class="${statusBadgeClass} px-2.5 py-1 rounded-lg text-xs font-semibold inline-block">${order.status}</span>
+                        <span class="${statusBadgeClass} px-2.5 py-1 rounded-lg text-xs font-semibold inline-block">${esc(order.status)}</span>
                     </td>
                     <td class="py-4 px-3 text-right">
                         ${actionButtons}
@@ -2968,24 +3275,18 @@
                 console.error('Error marking order paid:', error);
                 alert('Could not update order status: ' + error.message);
             } else {
+                if (order.item === 'Elite Rank' && order.email) {
+                    const { error: eliteErr } = await supabaseClient.from('profiles').update({ elite_active: true }).eq('email', order.email.toLowerCase());
+                    if (eliteErr) console.error('Error activating Elite:', eliteErr);
+                }
                 await loadOrdersFromSupabase();
+                if (typeof loadInsights === 'function') loadInsights();
             }
         }
 
         function togglePassword(index) {
-            let passText = document.getElementById(`pass-text-${index}`);
-            let passDots = document.getElementById(`pass-dots-${index}`);
-            let passIcon = document.getElementById(`pass-icon-${index}`);
-
-            if(passText.classList.contains('hidden')) {
-                passText.classList.remove('hidden');
-                passDots.classList.add('hidden');
-                passIcon.className = 'fa-solid fa-eye-slash text-accent';
-            } else {
-                passText.classList.add('hidden');
-                passDots.classList.remove('hidden');
-                passIcon.className = 'fa-solid fa-eye';
-            }
+            // Passwords are no longer exposed in the admin table (Supabase Auth
+            // manages them securely) — kept as a no-op in case old cached HTML calls it.
         }
 
         let activeOrderIndex = null;
@@ -3008,6 +3309,19 @@
             const modal = document.getElementById('adminCoordsModal');
             modal.classList.remove('modal-visible');
             modal.classList.add('modal-hidden');
+        }
+
+        function useAdminTemplate(type) {
+            let order = ordersList[activeOrderIndex];
+            let itemLine = order ? `Delivery for items: ${order.item}\n` : '';
+            let textarea = document.getElementById('adminCoordsInput');
+
+            if (type === 'teleport') {
+                textarea.value = itemLine + 'An administrator will teleport to you shortly to hand over your order in person.\nAdmin nickname: ____';
+            } else if (type === 'coords') {
+                textarea.value = itemLine + 'Please head to the following coordinates to collect your order:\nX: ____, Y: ____, Z: ____';
+            }
+            textarea.focus();
         }
 
         async function submitAdminCoords() {
@@ -3037,11 +3351,12 @@
             }
 
             closeAdminCoordsModal();
-            alert('All coordinates and message successfully sent to the order!');
+            alert('Message successfully sent to the order!');
         }
 
         setInterval(() => {
             loadOrdersFromSupabase();
+            if (currentUser) refreshMyProfile();
         }, 6000);
 
         // ---- Purely visual: scroll-reveal for section headers/panels ----
